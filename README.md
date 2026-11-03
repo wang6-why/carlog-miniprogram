@@ -12,7 +12,7 @@
 
 > 常见养车 App 的通病是功能堆到你看不懂。这个项目的取舍是——**只做三件事：记账、算油耗、提醒保养**，把这三件事做到算得准、看得懂。
 
-在线预览（纯 HTML 交互原型，无需安装）：`docs/index.html`
+在线体验：[wang6-why.github.io/carlog-miniprogram](https://wang6-why.github.io/carlog-miniprogram/)（纯 HTML 交互原型，无需安装）
 
 ---
 
