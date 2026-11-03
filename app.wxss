@@ -1,0 +1,429 @@
+/**
+ * 车迹 · 养车记账 —— 全局样式
+ *
+ * 设计方向：深色仪表盘 / 车载 HUD
+ * 核心思路是「数据像仪表盘仪表一样发光」：
+ *   - 底色压到接近黑（#0B0F17），让数字有对比空间
+ *   - 主色用青色（#00D4FF），这是车载仪表最常用的科技色，
+ *     且与警示红（#FF3B5C）、油价橙（#FF9F0A）形成明确语义分工
+ *   - 关键数字用等宽字体 + 字距，模拟真实仪表读数的机械感
+ */
+
+page {
+  /* ---------- 底色层级：越往上越亮，形成物理纵深感 ---------- */
+  --bg: #0B0F17;
+  --bg-1: #11161F;
+  --bg-2: #171E2A;
+  --bg-3: #1E2733;
+  --bg-card: #131922;
+
+  /* ---------- 主色：青（正常/数据） ---------- */
+  --cyan: #00D4FF;
+  --cyan-dim: #0891B2;
+  --cyan-glow: rgba(0, 212, 255, 0.28);
+  --cyan-soft: rgba(0, 212, 255, 0.12);
+
+  /* ---------- 语义色 ---------- */
+  --red: #FF3B5C;         /* 警示：保养超期、油耗异常上升 */
+  --red-soft: rgba(255, 59, 92, 0.14);
+  --amber: #FF9F0A;       /* 油价、待办 */
+  --amber-soft: rgba(255, 159, 10, 0.14);
+  --green: #32D74B;       /* 良好：油耗下降、保养正常 */
+  --green-soft: rgba(50, 215, 75, 0.14);
+  --purple: #BF5AF2;      /* 保养类 */
+  --purple-soft: rgba(191, 90, 242, 0.14);
+
+  /* ---------- 文字层级 ---------- */
+  --t1: #F2F6FA;
+  --t2: #A8B4C2;
+  --t3: #6B7787;
+  --t4: #47525F;
+
+  /* ---------- 描边与分隔 ---------- */
+  --line: rgba(255, 255, 255, 0.07);
+  --line-strong: rgba(255, 255, 255, 0.13);
+
+  /* ---------- 圆角 ---------- */
+  --r-sm: 12rpx;
+  --r-md: 20rpx;
+  --r-lg: 28rpx;
+  --r-xl: 40rpx;
+
+  background: var(--bg);
+  color: var(--t1);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+  font-size: 28rpx;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============ 布局工具 ============ */
+
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+  padding-bottom: 40rpx;
+  box-sizing: border-box;
+}
+
+.page-pad {
+  padding: 0 32rpx;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+}
+
+.row-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-1 {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ============ 卡片 ============ */
+
+.card {
+  background: var(--bg-card);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 32rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 卡片顶部高光，模拟玻璃反射 */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1rpx;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+}
+
+.card-flat {
+  background: var(--bg-1);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-md);
+  padding: 28rpx;
+}
+
+/* ============ 排版 ============ */
+
+/* 仪表读数：等宽 + 紧字距，机械感 */
+.reading {
+  font-family: "SF Mono", "DIN Alternate", "Roboto Mono", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  letter-spacing: -1rpx;
+  line-height: 1;
+}
+
+.reading-xl {
+  font-size: 96rpx;
+}
+
+.reading-lg {
+  font-size: 64rpx;
+}
+
+.reading-md {
+  font-size: 44rpx;
+}
+
+.reading-sm {
+  font-size: 32rpx;
+}
+
+.unit {
+  font-size: 24rpx;
+  font-weight: 500;
+  color: var(--t3);
+  letter-spacing: 0;
+  margin-left: 6rpx;
+}
+
+.label {
+  font-size: 24rpx;
+  color: var(--t3);
+  letter-spacing: 1rpx;
+}
+
+.section-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--t3);
+  letter-spacing: 2rpx;
+  text-transform: uppercase;
+  margin: 44rpx 0 20rpx;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.section-title::before {
+  content: '';
+  width: 6rpx;
+  height: 22rpx;
+  border-radius: 3rpx;
+  background: var(--cyan);
+  box-shadow: 0 0 12rpx var(--cyan-glow);
+}
+
+/* ============ 语义色 ============ */
+
+.c-cyan { color: var(--cyan); }
+.c-red { color: var(--red); }
+.c-amber { color: var(--amber); }
+.c-green { color: var(--green); }
+.c-purple { color: var(--purple); }
+.c-t1 { color: var(--t1); }
+.c-t2 { color: var(--t2); }
+.c-t3 { color: var(--t3); }
+
+/* ============ 徽标 / 标签 ============ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.badge-cyan { background: var(--cyan-soft); color: var(--cyan); }
+.badge-red { background: var(--red-soft); color: var(--red); }
+.badge-amber { background: var(--amber-soft); color: var(--amber); }
+.badge-green { background: var(--green-soft); color: var(--green); }
+.badge-purple { background: var(--purple-soft); color: var(--purple); }
+
+/* ============ 按钮 ============ */
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  height: 96rpx;
+  border-radius: var(--r-md);
+  font-size: 30rpx;
+  font-weight: 600;
+  border: none;
+  transition: transform 0.12s, opacity 0.12s;
+}
+
+.btn:active {
+  transform: scale(0.97);
+  opacity: 0.86;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #00D4FF 0%, #0091B8 100%);
+  color: #04121A;
+  box-shadow: 0 8rpx 28rpx rgba(0, 212, 255, 0.26);
+}
+
+.btn-ghost {
+  background: var(--bg-2);
+  color: var(--t1);
+  border: 1rpx solid var(--line-strong);
+}
+
+.btn-danger {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* 悬浮主按钮 */
+.fab {
+  position: fixed;
+  right: 36rpx;
+  bottom: 48rpx;
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00D4FF, #0091B8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12rpx 36rpx rgba(0, 212, 255, 0.4);
+  z-index: 50;
+  transition: transform 0.15s;
+}
+
+.fab:active {
+  transform: scale(0.92);
+}
+
+.fab-plus {
+  width: 44rpx;
+  height: 44rpx;
+  position: relative;
+}
+
+.fab-plus::before,
+.fab-plus::after {
+  content: '';
+  position: absolute;
+  background: #04121A;
+  border-radius: 3rpx;
+}
+
+.fab-plus::before {
+  left: 0;
+  top: 19rpx;
+  width: 44rpx;
+  height: 6rpx;
+}
+
+.fab-plus::after {
+  top: 0;
+  left: 19rpx;
+  width: 6rpx;
+  height: 44rpx;
+}
+
+/* ============ 表单 ============ */
+
+.field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30rpx 0;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.field:last-child {
+  border-bottom: none;
+}
+
+.field-label {
+  font-size: 28rpx;
+  color: var(--t2);
+  flex-shrink: 0;
+}
+
+.field-input {
+  flex: 1;
+  text-align: right;
+  font-size: 32rpx;
+  color: var(--t1);
+  font-family: "SF Mono", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.field-input-placeholder {
+  color: var(--t4);
+}
+
+/* ============ 分割线 ============ */
+
+.divider {
+  height: 1rpx;
+  background: var(--line);
+  margin: 24rpx 0;
+}
+
+/* ============ 空状态 ============ */
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 40rpx;
+  gap: 20rpx;
+}
+
+.empty-icon {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: var(--bg-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52rpx;
+  opacity: 0.6;
+}
+
+.empty-text {
+  font-size: 26rpx;
+  color: var(--t3);
+  text-align: center;
+  line-height: 1.7;
+}
+
+/* ============ 加载 ============ */
+
+.loading-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+}
+
+.spinner {
+  width: 48rpx;
+  height: 48rpx;
+  border: 4rpx solid var(--bg-3);
+  border-top-color: var(--cyan);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============ 动画 ============ */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: fadeUp 0.36s ease-out both;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.pulse {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* ============ 数字滚动用 ============ */
+
+.num-tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}

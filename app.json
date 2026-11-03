@@ -1,0 +1,57 @@
+{
+  "pages": [
+    "pages/dashboard/dashboard",
+    "pages/add/add",
+    "pages/records/records",
+    "pages/stats/stats",
+    "pages/maintain/maintain",
+    "pages/garage/garage",
+    "pages/mine/mine",
+    "pages/settings/settings"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#0B0F17",
+    "navigationBarTitleText": "车迹",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#0B0F17",
+    "backgroundColorTop": "#0B0F17",
+    "backgroundColorBottom": "#0B0F17",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "color": "#6B7787",
+    "selectedColor": "#00D4FF",
+    "backgroundColor": "#11161F",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/dashboard/dashboard",
+        "text": "仪表盘",
+        "iconPath": "assets/tabbar/dash.png",
+        "selectedIconPath": "assets/tabbar/dash-active.png"
+      },
+      {
+        "pagePath": "pages/records/records",
+        "text": "记录",
+        "iconPath": "assets/tabbar/records.png",
+        "selectedIconPath": "assets/tabbar/records-active.png"
+      },
+      {
+        "pagePath": "pages/stats/stats",
+        "text": "分析",
+        "iconPath": "assets/tabbar/stats.png",
+        "selectedIconPath": "assets/tabbar/stats-active.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "assets/tabbar/mine.png",
+        "selectedIconPath": "assets/tabbar/mine-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

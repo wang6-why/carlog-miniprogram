@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "加油记录",
+  "navigationBarBackgroundColor": "#0B0F17",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#0B0F17",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "light",
+  "usingComponents": {}
+}

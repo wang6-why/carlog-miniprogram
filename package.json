@@ -1,0 +1,13 @@
+{
+  "name": "carlog",
+  "version": "1.0.0",
+  "private": true,
+  "description": "车迹 · 养车记账小程序（微信原生）",
+  "scripts": {
+    "validate": "node scripts/validate.js",
+    "test": "node tests/__fuel_test.js && node tests/__maint_test.js && node tests/__e2e_test.js",
+    "check": "npm run validate && npm test"
+  },
+  "keywords": ["wechat", "miniprogram", "car", "fuel", "maintenance"],
+  "license": "MIT"
+}

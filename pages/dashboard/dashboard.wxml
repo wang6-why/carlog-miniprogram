@@ -1,0 +1,207 @@
+<view class="page dashboard">
+
+  <!-- ============ 自定义导航：车辆切换 ============ -->
+  <view class="nav" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-inner">
+      <view class="car-chip" bindtap="onCarTap">
+        <view class="car-dot" style="background: {{car.color}}; box-shadow: 0 0 16rpx {{car.color}};"></view>
+        <view class="car-name">
+          <text class="car-brand">{{car.brand}}</text>
+          <text class="car-model">{{car.model}}</text>
+        </view>
+        <view wx:if="{{cars.length > 1}}" class="car-caret">切换</view>
+      </view>
+
+      <view class="nav-actions">
+        <view class="plate">{{car.plate}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ============ 里程条 ============ -->
+  <view class="odo-strip">
+    <view class="odo-item">
+      <text class="odo-label">总里程</text>
+      <view class="odo-val">
+        <text class="reading reading-sm">{{car.odometer}}</text>
+        <text class="unit">km</text>
+      </view>
+    </view>
+    <view class="odo-sep"></view>
+    <view class="odo-item">
+      <text class="odo-label">记录里程</text>
+      <view class="odo-val">
+        <text class="reading reading-sm">{{totalKm}}</text>
+        <text class="unit">km</text>
+      </view>
+    </view>
+    <view class="odo-sep"></view>
+    <view class="odo-item">
+      <text class="odo-label">每公里</text>
+      <view class="odo-val">
+        <text class="reading reading-sm">{{costPerKm === null ? '--' : costPerKm}}</text>
+        <text class="unit">元</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ============ 油耗仪表盘（核心视觉）============ -->
+  <view class="gauge-card fade-up">
+    <gauge
+      value="{{consumption || 0}}"
+      max="{{15}}"
+      title="最近油耗"
+      subtitle="{{recordCount > 0 ? '共 ' + recordCount + ' 次加油记录' : '还没有加油记录'}}"
+      empty="{{consumptionEmpty}}"
+      bind:tap="onGaugeTap"
+    />
+    <view wx:if="{{trendText}}" class="trend-line {{trendClass}}">
+      {{trendText}}
+    </view>
+
+    <!-- 底部三个关键指标 -->
+    <view class="gauge-footer">
+      <view class="gf-item">
+        <text class="gf-val">{{monthSpend}}</text>
+        <text class="gf-label">本月油费</text>
+      </view>
+      <view class="gf-divider"></view>
+      <view class="gf-item">
+        <text class="gf-val">{{recordCount}}</text>
+        <text class="gf-label">加油次数</text>
+      </view>
+      <view class="gf-divider"></view>
+      <view class="gf-item">
+        <text class="gf-val">{{totalKm}}</text>
+        <text class="gf-label">累计里程(km)</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ============ 保养提醒 ============ -->
+  <block wx:if="{{alertCount > 0}}">
+    <view class="section-title">保养提醒</view>
+    <view class="alert-list">
+      <view
+        class="alert-card {{item.status}}"
+        wx:for="{{alerts}}"
+        wx:key="key"
+        bindtap="onAlertTap"
+      >
+        <view class="alert-icon">{{item.icon}}</view>
+        <view class="alert-body">
+          <view class="alert-head">
+            <text class="alert-name">{{item.name}}</text>
+            <view class="badge {{item.status === 'overdue' ? 'badge-red' : 'badge-amber'}}">
+              {{item.statusText}}
+            </view>
+          </view>
+          <view class="alert-bar">
+            <view class="alert-bar-fill {{item.barClass}}" style="width: {{item.progressWidth}}%"></view>
+          </view>
+          <text class="alert-hint">{{item.hint}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="section-title">保养状态</view>
+    <view class="all-good" bindtap="onGoMaintain">
+      <text class="ag-icon">✓</text>
+      <view class="ag-body">
+        <text class="ag-title">全部保养项目正常</text>
+        <text class="ag-sub">点击查看各项目剩余里程与天数</text>
+      </view>
+      <text class="ag-arrow">›</text>
+    </view>
+  </block>
+
+  <!-- ============ 快捷操作 ============ -->
+  <view class="quick-row">
+    <view class="quick-btn" bindtap="onAddFuel">
+      <view class="qb-icon fuel">⛽</view>
+      <text class="qb-text">记一笔加油</text>
+    </view>
+    <view class="quick-btn" bindtap="onAddMaintain">
+      <view class="qb-icon maint">🔧</view>
+      <text class="qb-text">记保养</text>
+    </view>
+    <view class="quick-btn" bindtap="onGoGarage">
+      <view class="qb-icon garage">🚗</view>
+      <text class="qb-text">车辆管理</text>
+    </view>
+  </view>
+
+  <!-- ============ 最近记录 ============ -->
+  <view class="section-title row-between" style="margin-bottom: 20rpx;">
+    <text>最近记录</text>
+    <text class="more-link" bindtap="onGoRecords">全部 ›</text>
+  </view>
+
+  <view wx:if="{{recent.length > 0}}" class="recent-list">
+    <view
+      class="recent-item"
+      wx:for="{{recent}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onRecordTap"
+    >
+      <view class="ri-left">
+        <text class="ri-date">{{item.dateText}}</text>
+        <text class="ri-station">{{item.station || '未记录加油站'}}</text>
+      </view>
+      <view class="ri-mid">
+        <text class="ri-mileage">{{item.mileageText}}km</text>
+        <text wx:if="{{item.consumptionText}}" class="ri-consumption">{{item.consumptionText}} L/100km</text>
+        <text wx:else class="ri-consumption muted">未满油·不计油耗</text>
+      </view>
+      <view class="ri-right">
+        <text class="ri-amount">¥{{item.amountText}}</text>
+        <text class="ri-liters">{{item.litersText}}L</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:else class="empty">
+    <view class="empty-icon">⛽</view>
+    <text class="empty-text">还没有加油记录\n点右下角 + 记第一笔</text>
+  </view>
+
+  <!-- ============ 用车小知识 ============ -->
+  <view wx:if="{{tip}}" class="tip-card">
+    <text class="tip-tag">小知识</text>
+    <text class="tip-text">{{tip}}</text>
+  </view>
+
+  <view class="bottom-space"></view>
+
+  <!-- ============ 悬浮按钮 ============ -->
+  <view class="fab" bindtap="onAddFuel">
+    <view class="fab-plus"></view>
+  </view>
+
+  <!-- ============ 车辆切换弹层 ============ -->
+  <view wx:if="{{carSwitcherVisible}}" class="sheet-mask" bindtap="onCloseSwitcher">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-handle"></view>
+      <view class="sheet-title">选择车辆</view>
+      <view
+        class="sheet-item {{item.id === car.id ? 'active' : ''}}"
+        wx:for="{{cars}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onSwitchCar"
+      >
+        <view class="car-dot" style="background: {{item.color}}; box-shadow: 0 0 14rpx {{item.color}};"></view>
+        <view class="sheet-item-body">
+          <text class="sheet-item-name">{{item.brand}} {{item.model}}</text>
+          <text class="sheet-item-sub">{{item.plate}} · {{item.odometer}}km</text>
+        </view>
+        <text wx:if="{{item.id === car.id}}" class="sheet-check">✓</text>
+      </view>
+      <view class="sheet-action" bindtap="onGoGarage">管理车辆</view>
+    </view>
+  </view>
+
+</view>

@@ -1,0 +1,118 @@
+<view class="page stats-page">
+
+  <!-- ============ 顶部车辆信息 ============ -->
+  <view class="head-info">
+    <view class="hi-dot" style="background: {{car.color}}; box-shadow: 0 0 14rpx {{car.color}};"></view>
+    <text class="hi-name">{{car.brand}} {{car.model}}</text>
+    <text class="hi-sub">{{car.odometer}}km · {{summary.recordCount || 0}} 次加油</text>
+  </view>
+
+  <!-- ============ 核心 KPI：平均油耗 ============ -->
+  <view class="hero-kpi">
+    <text class="hk-label">平均油耗</text>
+    <view class="hk-value">
+      <text class="hk-num reading">{{kpi.avgText}}</text>
+      <text class="hk-unit">L/100km</text>
+    </view>
+    <view class="hk-split">
+      <view class="hks-item">
+        <text class="hks-label">最省</text>
+        <text class="hks-val c-green">{{kpi.bestText}}</text>
+      </view>
+      <view class="hks-div"></view>
+      <view class="hks-item">
+        <text class="hks-label">最费</text>
+        <text class="hks-val c-red">{{kpi.worstText}}</text>
+      </view>
+      <view class="hks-div"></view>
+      <view class="hks-item">
+        <text class="hks-label">每公里</text>
+        <text class="hks-val">{{kpi.costPerKmText}} 元</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ============ 油耗趋势 ============ -->
+  <view class="section-title">油耗趋势</view>
+
+  <view wx:if="{{hasConsumption}}" class="chart-card">
+    <view class="chart-head">
+      <text class="ch-title">每次加满的油耗</text>
+      <text class="ch-hint">共 {{consumptionPoints.length}} 个数据点</text>
+    </view>
+    <canvas type="2d" id="chartConsumption" class="chart-canvas line-canvas"></canvas>
+    <text class="chart-foot">
+      曲线向上 = 变费油。若突然上涨 1L 以上，先查胎压、空气滤芯和是否换了路线。
+    </text>
+  </view>
+
+  <view wx:else class="chart-empty">
+    <text class="ce-icon">📈</text>
+    <text class="ce-title">数据还不够画趋势</text>
+    <text class="ce-sub">需要至少 2 次加满记录。\n油耗通过「两次加满之间」计算，这是行业标准算法。</text>
+  </view>
+
+  <!-- ============ 月度花费 ============ -->
+  <view class="section-title">近 6 个月油费</view>
+
+  <view wx:if="{{hasMonthData}}" class="chart-card">
+    <view class="chart-head">
+      <text class="ch-title">每月加油花费</text>
+      <text class="ch-hint">单位：元</text>
+    </view>
+    <canvas type="2d" id="chartMonth" class="chart-canvas bar-canvas"></canvas>
+  </view>
+
+  <view wx:else class="chart-empty small">
+    <text class="ce-title">近 6 个月还没有加油记录</text>
+  </view>
+
+  <!-- ============ 花费构成 ============ -->
+  <view class="section-title">花费构成</view>
+
+  <view class="cost-card">
+    <view class="cost-row">
+      <view class="cr-left">
+        <view class="cr-dot" style="background: #00D4FF;"></view>
+        <text class="cr-label">加油</text>
+      </view>
+      <text class="cr-val">¥{{kpi.totalAmountText}}</text>
+    </view>
+    <view class="cost-row">
+      <view class="cr-left">
+        <view class="cr-dot" style="background: #BF5AF2;"></view>
+        <text class="cr-label">保养维修</text>
+      </view>
+      <text class="cr-val">¥{{kpi.maintainCostText}}</text>
+    </view>
+    <view class="divider"></view>
+    <view class="cost-row total">
+      <view class="cr-left">
+        <text class="cr-label total-label">累计总花费</text>
+      </view>
+      <text class="cr-val total-val">¥{{kpi.grandTotalText}}</text>
+    </view>
+  </view>
+
+  <!-- ============ 里程小结 ============ -->
+  <view class="section-title">里程小结</view>
+
+  <view class="km-grid">
+    <view class="km-cell">
+      <text class="kc-val">{{kpi.totalKmText}}</text>
+      <text class="kc-label">记录里程 km</text>
+    </view>
+    <view class="km-cell">
+      <text class="kc-val">{{kpi.monthAmountText}}</text>
+      <text class="kc-label">本月油费 元</text>
+    </view>
+  </view>
+
+  <view class="stats-note">
+    <text class="sn-title">关于计算方式</text>
+    <text class="sn-text">油耗采用行业标准的「加满法」：两次加满之间的加油量 ÷ 这段里程 × 100。平均油耗按区间里程加权，不是把每次油耗简单平均——后者在里程差异大时会失准。</text>
+  </view>
+
+  <view class="bottom-space"></view>
+
+</view>

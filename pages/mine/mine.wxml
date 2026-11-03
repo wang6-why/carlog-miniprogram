@@ -1,0 +1,110 @@
+<view class="page mine-page">
+
+  <!-- ============ 车辆头卡 ============ -->
+  <view class="hero" bindtap="onGoGarage">
+    <view class="hero-bg"></view>
+    <view class="hero-content">
+      <view class="hero-top">
+        <view class="hero-car">
+          <view class="hc-dot" style="background: {{car.color}}; box-shadow: 0 0 18rpx {{car.color}};"></view>
+          <view class="hc-text">
+            <text class="hc-brand">{{car.brand}} {{car.model}}</text>
+            <text class="hc-plate">{{car.plate || '未填车牌'}}</text>
+          </view>
+        </view>
+        <text class="hero-arrow">›</text>
+      </view>
+
+      <view class="hero-stats">
+        <view class="hs-item">
+          <text class="hs-val">{{stats.totalKm}}</text>
+          <text class="hs-label">记录里程 km</text>
+        </view>
+        <view class="hs-div"></view>
+        <view class="hs-item">
+          <text class="hs-val c-cyan">{{stats.avgConsumption}}</text>
+          <text class="hs-label">平均油耗</text>
+        </view>
+        <view class="hs-div"></view>
+        <view class="hs-item">
+          <text class="hs-val">{{stats.totalCost}}</text>
+          <text class="hs-label">累计花费 元</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ============ 数据概览 ============ -->
+  <view class="section-title">数据概览</view>
+
+  <view class="overview-grid">
+    <view class="ov-cell" bindtap="onGoRecords">
+      <text class="ov-val">{{stats.records}}</text>
+      <text class="ov-label">加油记录</text>
+    </view>
+    <view class="ov-cell" bindtap="onGoMaintain">
+      <text class="ov-val">{{stats.maintainRecords}}</text>
+      <text class="ov-label">保养记录</text>
+    </view>
+    <view class="ov-cell" bindtap="onGoGarage">
+      <text class="ov-val">{{stats.cars}}</text>
+      <text class="ov-label">车辆</text>
+    </view>
+  </view>
+
+  <!-- ============ 保养警示 ============ -->
+  <view wx:if="{{alerts > 0}}" class="alert-banner" bindtap="onGoMaintain">
+    <view class="ab-icon">⚠️</view>
+    <view class="ab-body">
+      <text class="ab-title">有 {{alerts}} 项保养需要处理</text>
+      <text class="ab-sub">点击查看详情</text>
+    </view>
+    <text class="ab-arrow">›</text>
+  </view>
+
+  <!-- ============ 功能列表 ============ -->
+  <view class="section-title">功能</view>
+
+  <view class="menu-group">
+    <view class="menu-item" bindtap="onGoGarage">
+      <view class="mi-icon">🚗</view>
+      <text class="mi-text">我的车库</text>
+      <text class="mi-extra">{{stats.cars}} 辆</text>
+      <text class="mi-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="onGoMaintain">
+      <view class="mi-icon">🔧</view>
+      <text class="mi-text">保养档案</text>
+      <text wx:if="{{alerts > 0}}" class="mi-badge">{{alerts}}</text>
+      <text class="mi-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="onGoStats">
+      <view class="mi-icon">📊</view>
+      <text class="mi-text">数据分析</text>
+      <text class="mi-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="onGoRecords">
+      <view class="mi-icon">⛽</view>
+      <text class="mi-text">加油记录</text>
+      <text class="mi-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="section-title">其他</view>
+
+  <view class="menu-group">
+    <view class="menu-item" bindtap="onGoSettings">
+      <view class="mi-icon">⚙️</view>
+      <text class="mi-text">设置</text>
+      <text class="mi-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="footer-note">
+    <text class="fn-title">车迹 · 养车记账</text>
+    <text class="fn-sub">本地存储，数据不上传服务器</text>
+  </view>
+
+  <view class="bottom-space"></view>
+
+</view>

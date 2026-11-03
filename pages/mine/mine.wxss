@@ -1,0 +1,288 @@
+.mine-page {
+  padding: 24rpx 32rpx 60rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* ============ 车辆头卡 ============ */
+
+.hero {
+  position: relative;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  border: 1rpx solid rgba(0, 212, 255, 0.18);
+  background: var(--bg-card);
+}
+
+.hero:active {
+  opacity: 0.92;
+}
+
+/* 装饰光晕 */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 100% at 85% 0%, rgba(0, 212, 255, 0.2), transparent 62%),
+    linear-gradient(150deg, rgba(0, 212, 255, 0.07), transparent 55%);
+}
+
+.hero-content {
+  position: relative;
+  padding: 36rpx 32rpx 28rpx;
+}
+
+.hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32rpx;
+}
+
+.hero-car {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.hc-dot {
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.hc-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.hc-brand {
+  font-size: 38rpx;
+  font-weight: 700;
+  color: var(--t1);
+  letter-spacing: -0.6rpx;
+}
+
+.hc-plate {
+  font-size: 22rpx;
+  color: var(--t3);
+  font-family: "SF Mono", Consolas, monospace;
+  letter-spacing: 1rpx;
+}
+
+.hero-arrow {
+  font-size: 40rpx;
+  color: var(--t4);
+}
+
+.hero-stats {
+  display: flex;
+  align-items: center;
+  padding-top: 26rpx;
+  border-top: 1rpx solid var(--line);
+}
+
+.hs-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.hs-val {
+  font-family: "SF Mono", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--t1);
+  letter-spacing: -0.6rpx;
+}
+
+.hs-label {
+  font-size: 19rpx;
+  color: var(--t4);
+}
+
+.hs-div {
+  width: 1rpx;
+  height: 38rpx;
+  background: var(--line);
+}
+
+/* ============ 概览网格 ============ */
+
+.overview-grid {
+  display: flex;
+  gap: 14rpx;
+}
+
+.ov-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+  padding: 32rpx 16rpx;
+  border-radius: var(--r-md);
+  background: var(--bg-card);
+  border: 1rpx solid var(--line);
+}
+
+.ov-cell:active {
+  background: var(--bg-2);
+}
+
+.ov-val {
+  font-family: "SF Mono", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 44rpx;
+  font-weight: 700;
+  color: var(--t1);
+  letter-spacing: -1rpx;
+}
+
+.ov-label {
+  font-size: 20rpx;
+  color: var(--t3);
+}
+
+/* ============ 保养警示条 ============ */
+
+.alert-banner {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: 24rpx;
+  padding: 26rpx;
+  border-radius: var(--r-md);
+  background: var(--red-soft);
+  border: 1rpx solid rgba(255, 59, 92, 0.24);
+}
+
+.alert-banner:active {
+  opacity: 0.85;
+}
+
+.ab-icon {
+  font-size: 32rpx;
+  flex-shrink: 0;
+}
+
+.ab-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.ab-title {
+  font-size: 27rpx;
+  font-weight: 600;
+  color: var(--red);
+}
+
+.ab-sub {
+  font-size: 20rpx;
+  color: var(--t3);
+}
+
+.ab-arrow {
+  font-size: 34rpx;
+  color: rgba(255, 59, 92, 0.5);
+}
+
+/* ============ 菜单组 ============ */
+
+.menu-group {
+  background: var(--bg-card);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  padding: 30rpx 28rpx;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item:active {
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.mi-icon {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: var(--r-sm);
+  background: rgba(255, 255, 255, 0.055);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 27rpx;
+  flex-shrink: 0;
+}
+
+.mi-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: var(--t1);
+}
+
+.mi-extra {
+  font-size: 22rpx;
+  color: var(--t4);
+}
+
+.mi-badge {
+  min-width: 36rpx;
+  height: 36rpx;
+  padding: 0 10rpx;
+  border-radius: 999rpx;
+  background: var(--red);
+  color: #fff;
+  font-size: 20rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.mi-arrow {
+  font-size: 32rpx;
+  color: var(--t4);
+}
+
+/* ============ 页脚 ============ */
+
+.footer-note {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+  padding: 56rpx 0 0;
+}
+
+.fn-title {
+  font-size: 22rpx;
+  color: var(--t4);
+  letter-spacing: 1rpx;
+}
+
+.fn-sub {
+  font-size: 19rpx;
+  color: #333B45;
+}
+
+.bottom-space {
+  height: 100rpx;
+}

@@ -1,0 +1,30 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 静态校验（JSON / 页面四件套 / 组件 / require / 事件绑定）
+        run: node scripts/validate.js
+
+      - name: 单元测试 · 油耗引擎
+        run: node tests/__fuel_test.js
+
+      - name: 单元测试 · 保养提醒
+        run: node tests/__maint_test.js
+
+      - name: 端到端测试 · 数据流
+        run: node tests/__e2e_test.js

@@ -1,0 +1,2175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>车迹 · 养车记账 交互原型</title>
+<meta name="description" content="深色仪表盘风格的养车记账小程序交互原型 —— 加满法油耗计算、保养里程时间双维度提醒">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --bg: #0B0F17;
+  --bg-1: #11161F;
+  --bg-2: #171E2A;
+  --bg-3: #1E2733;
+  --bg-card: #131922;
+  --cyan: #00D4FF;
+  --cyan-dim: #0891B2;
+  --cyan-soft: rgba(0, 212, 255, 0.12);
+  --red: #FF3B5C;
+  --red-soft: rgba(255, 59, 92, 0.14);
+  --amber: #FF9F0A;
+  --amber-soft: rgba(255, 159, 10, 0.14);
+  --green: #32D74B;
+  --green-soft: rgba(50, 215, 75, 0.14);
+  --purple: #BF5AF2;
+  --purple-soft: rgba(191, 90, 242, 0.14);
+  --t1: #F2F6FA;
+  --t2: #A8B4C2;
+  --t3: #6B7787;
+  --t4: #47525F;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-strong: rgba(255, 255, 255, 0.13);
+  --mono: "SF Mono", "DIN Alternate", "Roboto Mono", Consolas, monospace;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: #16110D;
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px 16px; flex-wrap: wrap; gap: 36px;
+  background-image: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(0,212,255,.07), transparent 70%);
+}
+
+/* ============ 左侧介绍 ============ */
+.intro { width: 350px; color: #fff; flex-shrink: 0; }
+
+.intro-badge {
+  display: inline-block; padding: 5px 13px; border-radius: 999px;
+  background: rgba(0, 212, 255, .14); color: #5CE1FF;
+  font-size: 11.5px; font-weight: 600; letter-spacing: .6px; margin-bottom: 18px;
+}
+
+.intro h1 { font-size: 36px; font-weight: 800; line-height: 1.12; letter-spacing: -.8px; margin-bottom: 12px; }
+.intro h1 span { display: block; font-size: 18px; font-weight: 600; color: #00D4FF; margin-top: 8px; letter-spacing: 2px; }
+
+.intro-sub {
+  font-size: 14.5px; color: #D8CDBF; line-height: 1.6;
+  margin-bottom: 18px; padding-left: 12px; border-left: 3px solid #00D4FF;
+}
+
+.intro-desc { font-size: 13px; color: #9A8C82; line-height: 1.9; margin-bottom: 22px; }
+.intro-desc strong { color: #5CE1FF; font-weight: 600; }
+
+.feature-list { display: flex; flex-direction: column; gap: 11px; margin-bottom: 24px; }
+.feature-item { display: flex; gap: 11px; font-size: 12.5px; color: #A9988E; line-height: 1.55; }
+.feature-item .fi-key {
+  flex-shrink: 0; font-family: var(--mono); font-size: 11px;
+  color: #00D4FF; background: rgba(0,212,255,.1);
+  padding: 1px 7px; border-radius: 4px; height: fit-content;
+}
+.feature-item strong { color: #E0D5CB; font-weight: 600; }
+
+.intro-links { display: flex; gap: 10px; }
+.intro-link {
+  padding: 10px 20px; border-radius: 9px; font-size: 13px; font-weight: 600;
+  text-decoration: none; color: #D9CCC4;
+  border: 1px solid rgba(255,255,255,.14); transition: all .18s;
+}
+.intro-link:hover { background: rgba(255,255,255,.06); color: #fff; }
+.intro-link.primary { background: #00D4FF; color: #04121A; border-color: #00D4FF; }
+.intro-link.primary:hover { background: #00B4D8; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,212,255,.32); }
+
+.intro-stats { display: flex; gap: 26px; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.08); }
+.intro-stats .stat { display: flex; flex-direction: column; gap: 3px; }
+.intro-stats .stat b { font-family: var(--mono); font-size: 21px; font-weight: 700; color: var(--cyan); letter-spacing: -0.5px; }
+.intro-stats .stat span { font-size: 11px; color: #8A7C74; letter-spacing: .5px; }
+
+/* ============ 手机外壳 ============ */
+.phone {
+  width: 375px; height: 790px; background: var(--bg);
+  border-radius: 42px; position: relative; overflow: hidden;
+  box-shadow: 0 0 0 9px #1C242E, 0 0 0 11px #2C3641, 0 30px 70px rgba(0,0,0,.65),
+              0 0 90px rgba(0,212,255,.1);
+  display: flex; flex-direction: column; flex-shrink: 0;
+}
+
+.notch {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 130px; height: 26px; background: #1C242E;
+  border-radius: 0 0 18px 18px; z-index: 100;
+}
+
+.statusbar {
+  height: 46px; padding: 0 22px; display: flex; align-items: flex-end;
+  justify-content: space-between; font-size: 12px; font-weight: 600;
+  color: var(--t1); flex-shrink: 0; padding-bottom: 7px; position: relative; z-index: 90;
+}
+.statusbar .right { display: flex; align-items: center; gap: 6px; }
+.bars { display: flex; align-items: flex-end; gap: 1.5px; height: 10px; }
+.bars i { width: 2.5px; background: var(--t1); border-radius: 1px; }
+.bars i:nth-child(1){height:3px} .bars i:nth-child(2){height:5px}
+.bars i:nth-child(3){height:7px} .bars i:nth-child(4){height:9px}
+.battery { width: 20px; height: 10px; border: 1.4px solid var(--t1); border-radius: 3px; position: relative; }
+.battery::after { content:''; position:absolute; right:-3px; top:3px; width:2px; height:4px; background:var(--t1); border-radius:0 1px 1px 0; }
+.battery::before { content:''; position:absolute; left:1.4px; top:1.4px; bottom:1.4px; width:11px; background:var(--t1); border-radius:1px; }
+
+/* ============ 屏幕容器 ============ */
+.screen-wrap { flex: 1; position: relative; overflow: hidden; }
+.screen {
+  position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden;
+  padding-bottom: 20px; display: none;
+  scrollbar-width: none;
+}
+.screen::-webkit-scrollbar { display: none; }
+.screen.active { display: block; animation: fadeIn .22s ease-out; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ============ 导航栏 ============ */
+.navbar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 6px 18px 14px; background: var(--bg-1);
+  position: sticky; top: 0; z-index: 20;
+  border-bottom: 1px solid var(--line);
+}
+.nav-back {
+  width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,.06);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--t1); font-size: 17px; cursor: pointer; flex-shrink: 0;
+}
+.nav-back:active { background: rgba(255,255,255,.12); }
+.nav-title { font-size: 15.5px; font-weight: 600; color: var(--t1); }
+
+/* ============ TabBar ============ */
+.tabbar {
+  height: 62px; background: var(--bg-1); border-top: 1px solid var(--line);
+  display: flex; flex-shrink: 0; padding-bottom: env(safe-area-inset-bottom);
+}
+.tab-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 4px; cursor: pointer; color: var(--t3);
+  font-size: 10px; transition: color .18s;
+}
+.tab-item.active { color: var(--cyan); }
+.tab-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; }
+.tab-icon svg { width: 100%; height: 100%; }
+
+/* ============ 通用组件 ============ */
+.sec-title {
+  font-size: 11.5px; font-weight: 600; color: var(--t3);
+  letter-spacing: 1.6px; text-transform: uppercase;
+  margin: 22px 18px 11px; display: flex; align-items: center; gap: 7px;
+}
+.sec-title::before {
+  content:''; width: 3px; height: 12px; border-radius: 2px;
+  background: var(--cyan); box-shadow: 0 0 8px rgba(0,212,255,.7);
+}
+
+.card { background: var(--bg-card); border: 1px solid var(--line); border-radius: 15px; padding: 16px; }
+
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  height: 46px; border-radius: 11px; font-size: 14.5px; font-weight: 600;
+  border: none; cursor: pointer; transition: transform .1s, opacity .1s; width: 100%;
+  font-family: inherit;
+}
+.btn:active { transform: scale(.975); opacity: .9; }
+.btn-primary {
+  background: linear-gradient(135deg, #00D4FF, #0091B8); color: #04121A;
+  box-shadow: 0 6px 20px rgba(0,212,255,.24);
+}
+.btn-ghost { background: var(--bg-2); color: var(--t1); border: 1px solid var(--line-strong); }
+
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* ============ 首页 ============ */
+.dash-nav { display: flex; align-items: center; justify-content: space-between; padding: 6px 18px 10px; }
+.car-chip {
+  display: flex; align-items: center; gap: 9px; padding: 6px 13px 6px 9px;
+  border-radius: 999px; background: rgba(255,255,255,.05);
+  border: 1px solid var(--line); cursor: pointer;
+}
+.car-chip:active { background: rgba(255,255,255,.09); }
+.car-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.car-chip-name { font-size: 13.5px; font-weight: 600; color: var(--t1); }
+.car-chip-model { font-size: 12px; color: var(--t3); }
+.car-chip-caret { font-size: 9px; color: var(--cyan); }
+.plate-tag {
+  font-size: 10.5px; color: var(--t3); padding: 4px 9px; border-radius: 5px;
+  background: rgba(255,255,255,.04); border: 1px solid var(--line); font-family: var(--mono);
+}
+
+.odo-strip {
+  display: flex; align-items: center; margin: 4px 18px 0; padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.odo-cell { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.odo-lbl { font-size: 9.5px; color: var(--t3); letter-spacing: .5px; }
+.odo-val { font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--t1); }
+.odo-val small { font-size: 9px; color: var(--t3); font-weight: 500; margin-left: 2px; }
+.odo-sep { width: 1px; height: 22px; background: var(--line); }
+
+/* 仪表盘 */
+.gauge-card {
+  margin: 10px 18px 0; padding: 4px 12px 0; border-radius: 20px;
+  background: linear-gradient(180deg, rgba(23,30,42,.92) 0%, rgba(19,25,34,.6) 100%);
+  border: 1px solid var(--line); position: relative; overflow: hidden;
+}
+.gauge-card::before {
+  content:''; position: absolute; top: 0; left: 15%; right: 15%; height: 1.5px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent); opacity: .55;
+}
+.gauge-svg-wrap { position: relative; height: 216px; display: flex; align-items: center; justify-content: center; }
+.gauge-svg { width: 100%; height: 100%; }
+.gauge-center {
+  position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 2px; pointer-events: none;
+}
+.gauge-title { font-size: 10px; color: var(--t3); letter-spacing: 1.4px; text-transform: uppercase; }
+.gauge-num-row { display: flex; align-items: baseline; gap: 3px; }
+.gauge-num {
+  font-family: var(--mono); font-size: 44px; font-weight: 700; color: var(--t1);
+  line-height: 1; letter-spacing: -2px; text-shadow: 0 0 26px rgba(0,212,255,.5);
+}
+.gauge-unit { font-size: 10.5px; color: var(--t3); font-weight: 500; }
+.gauge-sub { font-size: 10px; color: var(--t4); letter-spacing: .5px; }
+
+.trend-line { text-align: center; font-size: 11.5px; font-weight: 600; margin: -4px 0 9px; }
+.trend-down { color: var(--green); }
+.trend-up { color: var(--red); }
+.trend-flat { color: var(--t3); }
+
+.gauge-footer {
+  display: flex; align-items: center; padding: 13px 0 15px; border-top: 1px solid var(--line);
+}
+.gf-cell { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.gf-val { font-family: var(--mono); font-size: 17px; font-weight: 700; color: var(--t1); letter-spacing: -.5px; }
+.gf-lbl { font-size: 9.5px; color: var(--t3); }
+.gf-sep { width: 1px; height: 20px; background: var(--line); }
+
+/* 保养提醒 */
+.alert-card {
+  display: flex; gap: 11px; padding: 13px; border-radius: 12px;
+  background: var(--bg-card); border: 1px solid var(--line); margin: 0 18px 8px;
+  cursor: pointer; position: relative; overflow: hidden;
+}
+.alert-card:active { opacity: .85; }
+.alert-card.overdue {
+  background: linear-gradient(90deg, rgba(255,59,92,.1) 0%, var(--bg-card) 60%);
+  border-color: rgba(255,59,92,.24);
+}
+.alert-card.soon {
+  background: linear-gradient(90deg, rgba(255,159,10,.09) 0%, var(--bg-card) 60%);
+  border-color: rgba(255,159,10,.22);
+}
+.alert-ico {
+  width: 38px; height: 38px; border-radius: 9px; background: rgba(255,255,255,.06);
+  display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0;
+}
+.alert-body { flex: 1; display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.alert-head { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.alert-name { font-size: 13.5px; font-weight: 600; color: var(--t1); }
+.badge { font-size: 9.5px; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+.badge-red { background: var(--red-soft); color: var(--red); }
+.badge-amber { background: var(--amber-soft); color: var(--amber); }
+.badge-green { background: var(--green-soft); color: var(--green); }
+.badge-cyan { background: var(--cyan-soft); color: var(--cyan); }
+.alert-bar { height: 3px; border-radius: 2px; background: rgba(255,255,255,.08); overflow: hidden; }
+.alert-bar > i { display: block; height: 100%; border-radius: 2px; }
+.bar-red { background: linear-gradient(90deg, #FF3B5C, #FF7A93); box-shadow: 0 0 8px rgba(255,59,92,.6); }
+.bar-amber { background: linear-gradient(90deg, #FF9F0A, #FFC44D); box-shadow: 0 0 8px rgba(255,159,10,.5); }
+.bar-green { background: linear-gradient(90deg, #32D74B, #6EE787); }
+.alert-hint { font-size: 10.5px; color: var(--t3); }
+
+/* 全部正常 */
+.all-good {
+  display: flex; align-items: center; gap: 11px; padding: 15px 14px; border-radius: 12px;
+  background: var(--green-soft); border: 1px solid rgba(50,215,75,.2); margin: 0 18px;
+  cursor: pointer;
+}
+.ag-ico {
+  width: 28px; height: 28px; border-radius: 50%; background: rgba(50,215,75,.18);
+  color: var(--green); font-size: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.ag-body { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.ag-title { font-size: 13.5px; font-weight: 600; color: var(--green); }
+.ag-sub { font-size: 10.5px; color: var(--t3); }
+.ag-arrow { font-size: 17px; color: var(--t4); }
+
+/* 快捷操作 */
+.quick-row { display: flex; gap: 8px; margin: 14px 18px 0; }
+.quick-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 7px;
+  padding: 14px 6px; border-radius: 12px; background: var(--bg-card);
+  border: 1px solid var(--line); cursor: pointer;
+}
+.quick-btn:active { background: var(--bg-2); transform: scale(.97); }
+.qb-ico {
+  width: 38px; height: 38px; border-radius: 50%; display: flex;
+  align-items: center; justify-content: center; font-size: 17px;
+}
+.qb-ico.fuel { background: var(--cyan-soft); }
+.qb-ico.maint { background: var(--purple-soft); }
+.qb-ico.garage { background: var(--amber-soft); }
+.qb-lbl { font-size: 11px; color: var(--t2); }
+
+/* 最近记录 */
+.recent-list { margin: 0 18px; background: var(--bg-card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.recent-item {
+  display: flex; align-items: center; gap: 9px; padding: 13px 14px;
+  border-bottom: 1px solid var(--line); cursor: pointer;
+}
+.recent-item:last-child { border-bottom: none; }
+.recent-item:active { background: rgba(255,255,255,.03); }
+.ri-date-col { display: flex; flex-direction: column; gap: 2px; min-width: 62px; }
+.ri-date { font-family: var(--mono); font-size: 11.5px; color: var(--t1); font-weight: 500; }
+.ri-station { font-size: 9.5px; color: var(--t4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 72px; }
+.ri-mid { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ri-mileage { font-family: var(--mono); font-size: 11.5px; color: var(--t2); }
+.ri-cons { font-family: var(--mono); font-size: 10px; color: var(--cyan); }
+.ri-cons.muted { color: var(--t4); }
+.ri-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.ri-amount { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--t1); }
+.ri-liters { font-size: 9.5px; color: var(--t4); }
+
+.sec-row { display: flex; align-items: center; justify-content: space-between; margin: 22px 18px 11px; }
+.sec-row .sec-title { margin: 0; }
+.more-link { font-size: 11px; color: var(--cyan); font-weight: 500; cursor: pointer; }
+
+.tip-card {
+  margin: 16px 18px 0; padding: 12px 13px; border-radius: 12px;
+  background: linear-gradient(135deg, rgba(0,212,255,.07), rgba(191,90,242,.05));
+  border: 1px solid rgba(0,212,255,.14); display: flex; gap: 8px; align-items: flex-start;
+}
+.tip-tag {
+  flex-shrink: 0; font-size: 9px; color: var(--cyan); background: rgba(0,212,255,.14);
+  padding: 2px 7px; border-radius: 4px; font-weight: 600; letter-spacing: .5px;
+}
+.tip-text { flex: 1; font-size: 10.5px; color: var(--t2); line-height: 1.65; }
+
+/* FAB */
+.fab {
+  position: absolute; right: 18px; bottom: 78px; width: 54px; height: 54px;
+  border-radius: 50%; background: linear-gradient(135deg, #00D4FF, #0091B8);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 10px 28px rgba(0,212,255,.4); cursor: pointer; z-index: 40;
+  transition: transform .12s;
+}
+.fab:active { transform: scale(.9); }
+.fab::before, .fab::after {
+  content:''; position: absolute; background: #04121A; border-radius: 2px;
+}
+.fab::before { width: 21px; height: 3px; }
+.fab::after { width: 3px; height: 21px; }
+
+/* ============ 记录页 ============ */
+.rec-summary {
+  display: flex; align-items: center; padding: 14px 18px 13px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(0,212,255,.05), transparent);
+}
+.rs-cell { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.rs-val { font-family: var(--mono); font-size: 16px; font-weight: 700; color: var(--t1); }
+.rs-lbl { font-size: 9.5px; color: var(--t3); }
+.rs-sep { width: 1px; height: 20px; background: var(--line); }
+
+.filter-row { display: flex; align-items: center; gap: 6px; margin: 14px 18px 0; }
+.filter-chip {
+  padding: 6px 13px; border-radius: 999px; font-size: 11.5px; color: var(--t3);
+  background: var(--bg-2); border: 1px solid var(--line); cursor: pointer; transition: all .18s;
+}
+.filter-chip.active {
+  background: var(--cyan-soft); color: var(--cyan);
+  border-color: rgba(0,212,255,.34); font-weight: 600;
+}
+.filter-total { margin-left: auto; display: flex; align-items: baseline; gap: 4px; }
+.ft-lbl { font-size: 10px; color: var(--t4); }
+.ft-val { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--t2); }
+
+.rec-list { margin: 12px 18px 0; display: flex; flex-direction: column; gap: 8px; }
+.rec-card {
+  display: flex; align-items: flex-start; gap: 10px; padding: 14px 13px;
+  border-radius: 12px; background: var(--bg-card); border: 1px solid var(--line);
+  position: relative; overflow: hidden; cursor: pointer;
+}
+.rec-card:active { background: var(--bg-2); }
+.rec-card.is-full::before {
+  content:''; position: absolute; left: 0; top: 20%; bottom: 20%;
+  width: 2px; background: var(--cyan); border-radius: 1px;
+}
+.rc-date-col { display: flex; flex-direction: column; gap: 2px; width: 66px; flex-shrink: 0; }
+.rc-date { font-family: var(--mono); font-size: 11px; color: var(--t2); }
+.rc-weekday { font-size: 9.5px; color: var(--t4); }
+.rc-main { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.rc-row1 { display: flex; align-items: baseline; gap: 3px; }
+.rc-mileage { font-family: var(--mono); font-size: 17px; font-weight: 700; color: var(--t1); letter-spacing: -.5px; }
+.rc-km { font-size: 9.5px; color: var(--t3); margin-right: 4px; }
+.tag-full { font-size: 8.5px; padding: 1px 5px; border-radius: 3px; background: var(--cyan-soft); color: var(--cyan); font-weight: 600; }
+.tag-partial { font-size: 8.5px; padding: 1px 5px; border-radius: 3px; background: rgba(255,255,255,.06); color: var(--t3); }
+.rc-row2 { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.rc-detail { font-size: 10px; color: var(--t3); font-family: var(--mono); }
+.rc-dot { font-size: 9px; color: var(--t4); }
+.rc-station { font-size: 10px; color: var(--t3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 96px; }
+.rc-cons-wrap {
+  display: flex; align-items: baseline; gap: 3px; padding: 4px 7px;
+  border-radius: 5px; background: rgba(0,212,255,.07); align-self: flex-start;
+}
+.rcc-val { font-family: var(--mono); font-size: 12.5px; font-weight: 700; color: var(--cyan); }
+.rcc-unit { font-size: 8.5px; color: var(--cyan); opacity: .75; }
+.rcc-sep { font-size: 8.5px; color: var(--t4); margin: 0 1px; }
+.rcc-cost { font-size: 9px; color: var(--t3); font-family: var(--mono); }
+.rc-nocons { font-size: 9.5px; color: var(--t4); font-style: italic; }
+.rc-amount-col { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+.rc-amount { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--t1); }
+.rc-arrow { font-size: 12px; color: var(--t4); }
+
+/* ============ 记一笔页 ============ */
+.preview-card {
+  margin: 14px 18px 0; padding: 16px; border-radius: 15px;
+  background: var(--bg-card); border: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 8px; transition: all .3s;
+}
+.preview-card.has-value {
+  background: linear-gradient(160deg, rgba(0,212,255,.13) 0%, var(--bg-card) 65%);
+  border-color: rgba(0,212,255,.3);
+}
+.pv-top { display: flex; align-items: center; justify-content: space-between; }
+.pv-label { font-size: 11px; color: var(--t3); letter-spacing: .5px; }
+.pv-badge { font-size: 9px; padding: 2px 7px; border-radius: 999px; background: rgba(255,255,255,.05); color: var(--t4); font-weight: 600; }
+.pv-badge.ok { background: var(--cyan-soft); color: var(--cyan); }
+.pv-value { display: flex; align-items: baseline; gap: 4px; }
+.pv-num { font-family: var(--mono); font-size: 32px; font-weight: 700; color: var(--cyan); line-height: 1; text-shadow: 0 0 26px rgba(0,212,255,.5); }
+.pv-dash { font-family: var(--mono); font-size: 32px; color: var(--t4); line-height: 1; }
+.pv-unit { font-size: 11px; color: var(--t3); }
+.pv-hint { font-size: 10.5px; color: var(--t3); line-height: 1.6; }
+
+.input-card { margin: 12px 18px 0; padding: 2px 16px; background: var(--bg-card); border: 1px solid var(--line); border-radius: 15px; }
+.field { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--line); }
+.field:last-child { border-bottom: none; }
+.field-label { font-size: 13px; color: var(--t2); flex-shrink: 0; }
+.field-side { display: flex; align-items: baseline; gap: 5px; flex: 1; justify-content: flex-end; }
+.field-input {
+  flex: 1; text-align: right; font-size: 20px; font-weight: 600; color: var(--t1);
+  font-family: var(--mono); background: none; border: none; outline: none; letter-spacing: -.5px;
+  min-width: 0; padding: 0;
+}
+.field-input::placeholder { color: var(--t4); font-weight: 400; font-size: 17px; }
+.field-unit { font-size: 11.5px; color: var(--t3); flex-shrink: 0; min-width: 30px; text-align: right; }
+.field-sub { font-size: 9.5px; color: var(--t4); }
+
+.full-card { margin: 12px 18px 0; padding: 14px 16px; background: var(--bg-card); border: 1px solid var(--line); border-radius: 15px; }
+.full-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.full-text { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.full-title { font-size: 14px; font-weight: 600; color: var(--t1); }
+.full-sub { font-size: 10px; color: var(--t3); line-height: 1.5; }
+
+.switch { width: 46px; height: 27px; border-radius: 999px; background: var(--bg-3); position: relative; cursor: pointer; transition: background .22s; flex-shrink: 0; }
+.switch.on { background: var(--cyan); }
+.switch::after {
+  content:''; position: absolute; width: 21px; height: 21px; border-radius: 50%;
+  background: #fff; top: 3px; left: 3px; transition: transform .22s;
+  box-shadow: 0 1px 4px rgba(0,0,0,.3);
+}
+.switch.on::after { transform: translateX(19px); }
+
+.warn-tip {
+  display: flex; gap: 7px; margin-top: 12px; padding: 10px;
+  border-radius: 7px; background: var(--amber-soft); border-left: 2px solid var(--amber);
+}
+.wt-ico {
+  width: 16px; height: 16px; border-radius: 50%; background: var(--amber); color: #1A1200;
+  font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.wt-text { flex: 1; font-size: 10.5px; color: #FFC44D; line-height: 1.6; }
+
+.more-card { margin: 12px 18px 0; padding: 2px 16px; background: var(--bg-card); border: 1px solid var(--line); border-radius: 15px; }
+.picker-val { font-size: 14px; color: var(--t1); font-family: var(--mono); display: flex; align-items: center; gap: 6px; }
+.picker-arrow { color: var(--t4); font-size: 15px; }
+
+.bottom-bar { padding: 14px 18px 8px; }
+
+/* ============ 分析页 ============ */
+.hero-kpi {
+  margin: 14px 18px 0; padding: 20px 16px 14px; border-radius: 20px;
+  background: linear-gradient(160deg, rgba(0,212,255,.11) 0%, var(--bg-card) 62%);
+  border: 1px solid rgba(0,212,255,.18); position: relative; overflow: hidden;
+}
+.hero-kpi::after {
+  content:''; position: absolute; top: -40px; right: -30px; width: 120px; height: 120px;
+  border-radius: 50%; background: radial-gradient(circle, rgba(0,212,255,.18), transparent 68%);
+}
+.hk-label { font-size: 10.5px; color: var(--t3); letter-spacing: 1.6px; text-transform: uppercase; }
+.hk-value { display: flex; align-items: baseline; gap: 6px; margin: 6px 0 14px; }
+.hk-num { font-family: var(--mono); font-size: 50px; font-weight: 700; color: var(--cyan); line-height: 1; letter-spacing: -2.5px; text-shadow: 0 0 32px rgba(0,212,255,.45); }
+.hk-unit { font-size: 11px; color: var(--t3); }
+.hk-split { display: flex; align-items: center; padding-top: 12px; border-top: 1px solid var(--line); position: relative; z-index: 1; }
+.hks-cell { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.hks-lbl { font-size: 9.5px; color: var(--t4); }
+.hks-val { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--t1); }
+.hks-sep { width: 1px; height: 18px; background: var(--line); }
+
+.chart-card { margin: 0 18px; padding: 14px 12px 10px; background: var(--bg-card); border: 1px solid var(--line); border-radius: 15px; }
+.chart-head { display: flex; align-items: baseline; justify-content: space-between; padding: 0 4px 8px; }
+.ch-title { font-size: 12.5px; font-weight: 600; color: var(--t1); }
+.ch-hint { font-size: 9.5px; color: var(--t4); }
+.chart-svg { width: 100%; display: block; }
+.chart-foot { font-size: 9.5px; color: var(--t4); line-height: 1.6; padding: 8px 4px 2px; }
+
+.cost-card { margin: 0 18px; padding: 2px 14px; background: var(--bg-card); border: 1px solid var(--line); border-radius: 15px; }
+.cost-row { display: flex; align-items: center; justify-content: space-between; padding: 13px 0; border-bottom: 1px solid var(--line); }
+.cost-row:last-child { border-bottom: none; }
+.cr-left { display: flex; align-items: center; gap: 8px; }
+.cr-dot { width: 8px; height: 8px; border-radius: 2px; }
+.cr-lbl { font-size: 12.5px; color: var(--t2); }
+.cr-val { font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--t1); }
+.cost-row.total .cr-lbl { font-size: 13.5px; font-weight: 600; color: var(--t1); }
+.cost-row.total .cr-val { font-size: 17px; font-weight: 700; color: var(--cyan); }
+
+.km-grid { display: flex; gap: 8px; margin: 0 18px; }
+.km-cell { flex: 1; display: flex; flex-direction: column; gap: 5px; padding: 16px 12px; background: var(--bg-card); border: 1px solid var(--line); border-radius: 12px; }
+.kc-val { font-family: var(--mono); font-size: 21px; font-weight: 700; color: var(--t1); letter-spacing: -.5px; }
+.kc-lbl { font-size: 9.5px; color: var(--t3); }
+
+.stats-note {
+  margin: 18px 18px 0; padding: 13px; border-radius: 12px;
+  background: rgba(255,255,255,.022); border: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.sn-title { font-size: 11px; color: var(--t2); font-weight: 600; }
+.sn-text { font-size: 10px; color: var(--t4); line-height: 1.72; }
+
+/* ============ 保养页 ============ */
+.health-card {
+  margin: 14px 18px 0; padding: 16px; border-radius: 15px;
+  border: 1px solid var(--line); background: var(--bg-card);
+  display: flex; align-items: center; gap: 11px;
+}
+.health-card.danger { background: linear-gradient(135deg, rgba(255,59,92,.13), var(--bg-card) 65%); border-color: rgba(255,59,92,.26); }
+.health-card.warn { background: linear-gradient(135deg, rgba(255,159,10,.11), var(--bg-card) 65%); border-color: rgba(255,159,10,.24); }
+.health-card.good { background: linear-gradient(135deg, rgba(50,215,75,.1), var(--bg-card) 65%); border-color: rgba(50,215,75,.22); }
+.hc-ico { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.07); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.hc-body { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.hc-title { font-size: 15.5px; font-weight: 700; color: var(--t1); }
+.hc-sub { font-size: 10px; color: var(--t3); }
+
+.tab-row { display: flex; gap: 4px; margin: 14px 18px 0; padding: 3px; border-radius: 11px; background: var(--bg-1); border: 1px solid var(--line); }
+.tab-btn { flex: 1; text-align: center; padding: 9px 0; border-radius: 8px; font-size: 12.5px; color: var(--t3); cursor: pointer; transition: all .2s; }
+.tab-btn.active { background: var(--bg-3); color: var(--t1); font-weight: 600; }
+
+.board-list { margin: 12px 18px 0; display: flex; flex-direction: column; gap: 8px; }
+.board-item {
+  padding: 14px; border-radius: 12px; background: var(--bg-card);
+  border: 1px solid var(--line); display: flex; flex-direction: column; gap: 9px; cursor: pointer;
+}
+.board-item:active { transform: scale(.988); }
+.board-item.overdue { background: linear-gradient(110deg, rgba(255,59,92,.09), var(--bg-card) 55%); border-color: rgba(255,59,92,.22); }
+.board-item.soon { background: linear-gradient(110deg, rgba(255,159,10,.08), var(--bg-card) 55%); border-color: rgba(255,159,10,.2); }
+.bi-head { display: flex; align-items: center; gap: 9px; }
+.bi-ico { width: 34px; height: 34px; border-radius: 8px; background: rgba(255,255,255,.055); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.bi-title-area { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.bi-name { font-size: 14px; font-weight: 600; color: var(--t1); }
+.bi-desc { font-size: 9.5px; color: var(--t4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bi-bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,.07); overflow: hidden; }
+.bi-bar > i { display: block; height: 100%; border-radius: 2px; }
+.bg-red { background: linear-gradient(90deg,#FF3B5C,#FF7A93); box-shadow: 0 0 10px rgba(255,59,92,.55); }
+.bg-amber { background: linear-gradient(90deg,#FF9F0A,#FFC44D); box-shadow: 0 0 10px rgba(255,159,10,.5); }
+.bg-green { background: linear-gradient(90deg,#32D74B,#6EE787); box-shadow: 0 0 10px rgba(50,215,75,.4); }
+.bg-grey { background: rgba(107,119,135,.5); }
+.bi-grid { display: flex; gap: 5px; }
+.big-cell { flex: 1; display: flex; flex-direction: column; gap: 3px; padding: 7px 8px; border-radius: 7px; background: rgba(255,255,255,.032); }
+.bc-lbl { font-size: 8.5px; color: var(--t4); }
+.bc-val { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--t1); letter-spacing: -.3px; }
+.bc-val.muted { color: var(--t3); font-weight: 500; }
+.bi-foot { display: flex; align-items: center; justify-content: space-between; padding-top: 7px; border-top: 1px solid var(--line); }
+.bf-text { font-size: 9.5px; color: var(--t4); }
+.bf-action { font-size: 10px; color: var(--cyan); font-weight: 500; }
+
+.board-note {
+  display: flex; gap: 7px; margin: 14px 18px 0; padding: 11px 12px;
+  border-radius: 12px; background: rgba(255,255,255,.025); border: 1px solid var(--line);
+}
+.bn-ico { font-size: 11px; opacity: .6; flex-shrink: 0; }
+.bn-text { flex: 1; font-size: 10px; color: var(--t4); line-height: 1.7; }
+
+/* ============ 我的页 ============ */
+.hero-mine {
+  margin: 14px 18px 0; border-radius: 20px; overflow: hidden;
+  border: 1px solid rgba(0,212,255,.18); background: var(--bg-card);
+  position: relative; cursor: pointer;
+}
+.hero-mine-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 100% at 85% 0%, rgba(0,212,255,.2), transparent 62%),
+              linear-gradient(150deg, rgba(0,212,255,.07), transparent 55%);
+}
+.hero-mine-content { position: relative; padding: 18px 16px 14px; }
+.hm-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.hm-car { display: flex; align-items: center; gap: 8px; }
+.hm-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.hm-text { display: flex; flex-direction: column; gap: 4px; }
+.hm-brand { font-size: 19px; font-weight: 700; color: var(--t1); letter-spacing: -.4px; }
+.hm-plate { font-size: 11px; color: var(--t3); font-family: var(--mono); letter-spacing: .5px; }
+.hm-arrow { font-size: 20px; color: var(--t4); }
+.hm-stats { display: flex; align-items: center; padding-top: 13px; border-top: 1px solid var(--line); }
+.hs-cell { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.hs-val { font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--t1); }
+.hs-lbl { font-size: 9px; color: var(--t4); }
+.hs-sep { width: 1px; height: 20px; background: var(--line); }
+
+.ov-grid { display: flex; gap: 7px; margin: 0 18px; }
+.ov-cell {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px;
+  padding: 16px 8px; border-radius: 12px; background: var(--bg-card);
+  border: 1px solid var(--line); cursor: pointer;
+}
+.ov-cell:active { background: var(--bg-2); }
+.ov-val { font-family: var(--mono); font-size: 22px; font-weight: 700; color: var(--t1); letter-spacing: -.6px; }
+.ov-lbl { font-size: 9.5px; color: var(--t3); }
+
+.alert-banner {
+  display: flex; align-items: center; gap: 9px; margin: 12px 18px 0; padding: 13px;
+  border-radius: 12px; background: var(--red-soft); border: 1px solid rgba(255,59,92,.24); cursor: pointer;
+}
+.ab-ico { font-size: 16px; flex-shrink: 0; }
+.ab-body { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.ab-title { font-size: 13px; font-weight: 600; color: var(--red); }
+.ab-sub { font-size: 9.5px; color: var(--t3); }
+.ab-arrow { font-size: 17px; color: rgba(255,59,92,.5); }
+
+.menu-group { margin: 0 18px; background: var(--bg-card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.menu-item { display: flex; align-items: center; gap: 9px; padding: 14px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.menu-item:last-child { border-bottom: none; }
+.menu-item:active { background: rgba(255,255,255,.035); }
+.mi-ico { width: 30px; height: 30px; border-radius: 7px; background: rgba(255,255,255,.055); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.mi-text { flex: 1; font-size: 13.5px; color: var(--t1); }
+.mi-extra { font-size: 11px; color: var(--t4); }
+.mi-badge {
+  min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px;
+  background: var(--red); color: #fff; font-size: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.mi-arrow { font-size: 15px; color: var(--t4); }
+
+.footer-note { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 26px 0 0; }
+.fn-title { font-size: 11px; color: var(--t4); letter-spacing: .5px; }
+.fn-sub { font-size: 9.5px; color: #333B45; }
+
+/* ============ Toast ============ */
+.toast {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(.9);
+  background: rgba(28, 36, 46, .96); color: var(--t1); padding: 12px 22px;
+  border-radius: 11px; font-size: 13px; z-index: 300; opacity: 0;
+  pointer-events: none; transition: all .22s; white-space: nowrap;
+  border: 1px solid var(--line-strong); backdrop-filter: blur(10px);
+}
+.toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+/* ============ 响应式 ============ */
+@media (max-width: 820px) {
+  body { padding: 0; gap: 0; background: #0B0F17; }
+  .intro { display: none; }
+  .phone {
+    width: 100%; height: 100vh; border-radius: 0;
+    box-shadow: none;
+  }
+  .notch { display: none; }
+  .statusbar { height: 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ 左侧介绍 ============ -->
+<div class="intro">
+  <div class="intro-badge">微信小程序 · 交互原型</div>
+  <h1>车迹<span>养车记账</span></h1>
+  <p class="intro-sub">记一笔加油，看清每一公里花了多少钱。</p>
+  <p class="intro-desc">
+    面向私家车主的用车工具。核心不是"又一个记账本"，
+    而是把<strong>油耗算准</strong>和<strong>保养不漏</strong>这两件事做到位。
+  </p>
+
+  <div class="feature-list">
+    <div class="feature-item">
+      <span class="fi-key">加满法</span>
+      <span>两次加满之间的油量 ÷ 里程，行业标准算法。<strong>非满油记录自动挂起</strong>，等下次加满一起结算</span>
+    </div>
+    <div class="feature-item">
+      <span class="fi-key">加权</span>
+      <span>平均油耗按里程<strong>加权</strong>而非算术平均，里程差异大时不会失真</span>
+    </div>
+    <div class="feature-item">
+      <span class="fi-key">双维度</span>
+      <span>保养按<strong>里程或时间先到者</strong>提醒。机油不开也会氧化</span>
+    </div>
+    <div class="feature-item">
+      <span class="fi-key">实时</span>
+      <span>输入里程和油量时<strong>实时预览</strong>本次油耗，存完不用再去统计页</span>
+    </div>
+  </div>
+
+  <div class="intro-links">
+    <a class="intro-link primary" href="https://github.com/wang6-why/carlog-miniprogram" target="_blank" rel="noopener">查看源码</a>
+    <a class="intro-link" href="#" onclick="jumpTo(0); return false;">开始体验</a>
+  </div>
+
+  <div class="intro-stats">
+    <div class="stat"><b>84</b><span>项测试通过</span></div>
+    <div class="stat"><b>8</b><span>个页面</span></div>
+    <div class="stat"><b>0</b><span>第三方依赖</span></div>
+  </div>
+</div>
+
+<!-- ============ 手机 ============ -->
+<div class="phone">
+  <div class="notch"></div>
+  <div class="statusbar">
+    <span id="clock">9:41</span>
+    <div class="right">
+      <div class="bars"><i></i><i></i><i></i><i></i></div>
+      <span style="font-size:10px;font-weight:700">5G</span>
+      <div class="battery"></div>
+    </div>
+  </div>
+
+  <div class="screen-wrap">
+
+    <!-- ==================== 首页 ==================== -->
+    <div class="screen active" id="screen-dashboard">
+      <div class="dash-nav">
+        <div class="car-chip" onclick="jumpTo(4)">
+          <div class="car-dot" id="carDot" style="background:#00D4FF;box-shadow:0 0 12px #00D4FF"></div>
+          <span class="car-chip-name" id="carName">大众</span>
+          <span class="car-chip-model" id="carModel">速腾</span>
+          <span class="car-chip-caret">切换</span>
+        </div>
+        <div class="plate-tag" id="plateTag">鲁A·8K2M9</div>
+      </div>
+
+      <div class="odo-strip">
+        <div class="odo-cell">
+          <span class="odo-lbl">总里程</span>
+          <span class="odo-val" id="odoTotal">48620<small>km</small></span>
+        </div>
+        <div class="odo-sep"></div>
+        <div class="odo-cell">
+          <span class="odo-lbl">记录里程</span>
+          <span class="odo-val" id="odoRecorded">6050<small>km</small></span>
+        </div>
+        <div class="odo-sep"></div>
+        <div class="odo-cell">
+          <span class="odo-lbl">每公里</span>
+          <span class="odo-val" id="costPerKm">0.59<small>元</small></span>
+        </div>
+      </div>
+
+      <div class="gauge-card">
+        <div class="gauge-svg-wrap">
+          <svg class="gauge-svg" viewBox="0 0 300 200" id="gaugeSvg">
+            <!-- 由 JS 绘制 -->
+          </svg>
+          <div class="gauge-center">
+            <div class="gauge-title">最近油耗</div>
+            <div class="gauge-num-row">
+              <span class="gauge-num" id="gaugeNum">7.4</span>
+              <span class="gauge-unit">L/100km</span>
+            </div>
+            <div class="gauge-sub" id="gaugeSub">共 11 次加油记录</div>
+          </div>
+        </div>
+        <div class="trend-line trend-down" id="trendLine">↓ 0.3 比上次省油</div>
+        <div class="gauge-footer">
+          <div class="gf-cell">
+            <span class="gf-val" id="monthSpend">680</span>
+            <span class="gf-lbl">本月油费</span>
+          </div>
+          <div class="gf-sep"></div>
+          <div class="gf-cell">
+            <span class="gf-val" id="recordCount">11</span>
+            <span class="gf-lbl">加油次数</span>
+          </div>
+          <div class="gf-sep"></div>
+          <div class="gf-cell">
+            <span class="gf-val" id="totalKm">6050</span>
+            <span class="gf-lbl">累计里程(km)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-title">保养提醒</div>
+      <div id="alertContainer"></div>
+
+      <div class="quick-row">
+        <div class="quick-btn" onclick="jumpTo(2)">
+          <div class="qb-ico fuel">⛽</div>
+          <span class="qb-lbl">记一笔加油</span>
+        </div>
+        <div class="quick-btn" onclick="jumpTo(3)">
+          <div class="qb-ico maint">🔧</div>
+          <span class="qb-lbl">记保养</span>
+        </div>
+        <div class="quick-btn" onclick="showToast('车辆管理')">
+          <div class="qb-ico garage">🚗</div>
+          <span class="qb-lbl">车辆管理</span>
+        </div>
+      </div>
+
+      <div class="sec-row">
+        <div class="sec-title">最近记录</div>
+        <span class="more-link" onclick="jumpTo(1)">全部 ›</span>
+      </div>
+      <div class="recent-list" id="recentList"></div>
+
+      <div class="tip-card">
+        <span class="tip-tag">小知识</span>
+        <span class="tip-text">连续两次加满之间的数据，才能算准油耗。非满油记录会自动挂起。</span>
+      </div>
+
+      <div style="height:20px"></div>
+      <div class="fab" onclick="jumpTo(2)"></div>
+    </div>
+
+    <!-- ==================== 记录页 ==================== -->
+    <div class="screen" id="screen-records">
+      <div class="navbar">
+        <div class="nav-title">加油记录</div>
+      </div>
+
+      <div class="rec-summary">
+        <div class="rs-cell">
+          <span class="rs-val" id="recTotal">11</span>
+          <span class="rs-lbl">总记录</span>
+        </div>
+        <div class="rs-sep"></div>
+        <div class="rs-cell">
+          <span class="rs-val" id="recLiters">430.9</span>
+          <span class="rs-lbl">总油量(L)</span>
+        </div>
+        <div class="rs-sep"></div>
+        <div class="rs-cell">
+          <span class="rs-val" id="recAmount">3597</span>
+          <span class="rs-lbl">总花费(元)</span>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <div class="filter-chip active" data-filter="all" onclick="setFilter('all')">全部</div>
+        <div class="filter-chip" data-filter="full" onclick="setFilter('full')">已加满</div>
+        <div class="filter-chip" data-filter="partial" onclick="setFilter('partial')">未加满</div>
+        <div class="filter-total">
+          <span class="ft-lbl">合计</span>
+          <span class="ft-val" id="filterTotal">¥3597</span>
+        </div>
+      </div>
+
+      <div class="rec-list" id="recordList"></div>
+      <div style="height:90px"></div>
+      <div class="fab" onclick="jumpTo(2)"></div>
+    </div>
+
+    <!-- ==================== 记一笔 ==================== -->
+    <div class="screen" id="screen-add">
+      <div class="navbar">
+        <div class="nav-back" onclick="jumpTo(0)">‹</div>
+        <div class="nav-title">记加油</div>
+      </div>
+
+      <div class="preview-card" id="previewCard">
+        <div class="pv-top">
+          <span class="pv-label">本次油耗预览</span>
+          <span class="pv-badge" id="pvBadge">待计算</span>
+        </div>
+        <div class="pv-value" id="pvValue">
+          <span class="pv-dash">--</span>
+        </div>
+        <div class="pv-hint" id="pvHint">填好里程、升数、油价，这里会实时算出本次油耗</div>
+      </div>
+
+      <div class="input-card">
+        <div class="field">
+          <span class="field-label">当前里程</span>
+          <div class="field-side">
+            <input class="field-input mono" id="inMileage" type="number" placeholder="0" inputmode="decimal">
+            <span class="field-unit">km</span>
+          </div>
+        </div>
+        <div class="field">
+          <span class="field-label">加油量</span>
+          <div class="field-side">
+            <input class="field-input mono" id="inLiters" type="number" placeholder="0.00" inputmode="decimal" step="0.01">
+            <span class="field-unit">L</span>
+          </div>
+        </div>
+        <div class="field">
+          <span class="field-label">油价</span>
+          <div class="field-side">
+            <input class="field-input mono" id="inPrice" type="number" placeholder="0.00" inputmode="decimal" step="0.01">
+            <span class="field-unit">元/L</span>
+          </div>
+        </div>
+        <div class="field">
+          <span class="field-label">总金额</span>
+          <div class="field-side">
+            <input class="field-input mono" id="inAmount" type="number" placeholder="0.00" inputmode="decimal" step="0.01">
+            <span class="field-unit">元</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="full-card">
+        <div class="full-row">
+          <div class="full-text">
+            <span class="full-title">本次是否加满</span>
+            <span class="full-sub">只有两次加满之间才能算出准确油耗</span>
+          </div>
+          <div class="switch on" id="switchFull" onclick="toggleFull()"></div>
+        </div>
+        <div class="warn-tip" id="warnTip" style="display:none">
+          <span class="wt-ico">!</span>
+          <span class="wt-text">不加满时无法确定剩余油量，这笔会挂起，等下次加满时一起结算</span>
+        </div>
+      </div>
+
+      <div class="more-card">
+        <div class="field">
+          <span class="field-label">日期</span>
+          <div class="picker-val"><span id="todayText">2026-11-03</span><span class="picker-arrow">›</span></div>
+        </div>
+        <div class="field">
+          <span class="field-label">加油站</span>
+          <div class="field-side">
+            <input class="field-input" id="inStation" type="text" placeholder="选填" style="font-size:14px;font-weight:400;font-family:inherit">
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-bar">
+        <button class="btn btn-primary" onclick="submitFuel()">保存</button>
+      </div>
+      <div style="height:20px"></div>
+    </div>
+
+    <!-- ==================== 分析页 ==================== -->
+    <div class="screen" id="screen-stats">
+      <div class="navbar">
+        <div class="nav-title">数据分析</div>
+      </div>
+
+      <div class="hero-kpi">
+        <div class="hk-label">平均油耗</div>
+        <div class="hk-value">
+          <span class="hk-num" id="avgNum">6.89</span>
+          <span class="hk-unit">L/100km</span>
+        </div>
+        <div class="hk-split">
+          <div class="hks-cell">
+            <span class="hks-lbl">最省</span>
+            <span class="hks-val" style="color:#32D74B" id="bestCons">--</span>
+          </div>
+          <div class="hks-sep"></div>
+          <div class="hks-cell">
+            <span class="hks-lbl">最费</span>
+            <span class="hks-val" style="color:#FF3B5C" id="worstCons">--</span>
+          </div>
+          <div class="hks-sep"></div>
+          <div class="hks-cell">
+            <span class="hks-lbl">每公里</span>
+            <span class="hks-val" id="costPerKm2">--</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-title">油耗趋势</div>
+      <div class="chart-card">
+        <div class="chart-head">
+          <span class="ch-title">每次加满的油耗</span>
+          <span class="ch-hint" id="pointHint">共 9 个数据点</span>
+        </div>
+        <svg class="chart-svg" viewBox="0 0 320 175" id="lineChart"></svg>
+        <div class="chart-foot">曲线向上 = 变费油。若突然上涨 1L 以上，先查胎压、空气滤芯和是否换了路线。</div>
+      </div>
+
+      <div class="sec-title">近 6 个月油费</div>
+      <div class="chart-card">
+        <div class="chart-head">
+          <span class="ch-title">每月加油花费</span>
+          <span class="ch-hint">单位：元</span>
+        </div>
+        <svg class="chart-svg" viewBox="0 0 320 155" id="barChart"></svg>
+      </div>
+
+      <div class="sec-title">花费构成</div>
+      <div class="cost-card">
+        <div class="cost-row">
+          <div class="cr-left"><div class="cr-dot" style="background:#00D4FF"></div><span class="cr-lbl">加油</span></div>
+          <span class="cr-val" id="costFuel">¥3597</span>
+        </div>
+        <div class="cost-row">
+          <div class="cr-left"><div class="cr-dot" style="background:#BF5AF2"></div><span class="cr-lbl">保养维修</span></div>
+          <span class="cr-val" id="costMaint">¥1398</span>
+        </div>
+        <div class="cost-row total">
+          <div class="cr-left"><span class="cr-lbl">累计总花费</span></div>
+          <span class="cr-val" id="costTotal">¥4995</span>
+        </div>
+      </div>
+
+      <div class="sec-title">里程小结</div>
+      <div class="km-grid">
+        <div class="km-cell">
+          <span class="kc-val" id="kmRecorded">6050</span>
+          <span class="kc-lbl">记录里程 km</span>
+        </div>
+        <div class="km-cell">
+          <span class="kc-val" id="kmMonth">680</span>
+          <span class="kc-lbl">本月油费 元</span>
+        </div>
+      </div>
+
+      <div class="stats-note">
+        <span class="sn-title">关于计算方式</span>
+        <span class="sn-text">油耗采用行业标准的「加满法」：两次加满之间的加油量 ÷ 这段里程 × 100。平均油耗按区间里程加权，不是把每次油耗简单平均——后者在里程差异大时会失准。</span>
+      </div>
+      <div style="height:24px"></div>
+    </div>
+
+    <!-- ==================== 保养页 ==================== -->
+    <div class="screen" id="screen-maintain">
+      <div class="navbar">
+        <div class="nav-title">保养档案</div>
+      </div>
+
+      <div class="health-card danger" id="healthCard">
+        <div class="hc-ico" id="healthIco">⚠️</div>
+        <div class="hc-body">
+          <span class="hc-title" id="healthTitle">1 项已超期</span>
+          <span class="hc-sub" id="healthSub">超期 1 · 即将 0 · 正常 4 · 无记录 3</span>
+        </div>
+      </div>
+
+      <div class="tab-row">
+        <div class="tab-btn active" onclick="switchMaintTab('board')">保养看板</div>
+        <div class="tab-btn" onclick="switchMaintTab('history')">保养历史</div>
+      </div>
+
+      <div id="maintBoard">
+        <div class="board-list" id="boardList"></div>
+        <div class="board-note">
+          <span class="bn-ico">ℹ️</span>
+          <span class="bn-text">提醒规则为「里程或时间，先到者触发」。机油即使不开也会随时间氧化，所以时间维度不可省。</span>
+        </div>
+      </div>
+
+      <div id="maintHistory" style="display:none">
+        <div class="board-list" id="historyList"></div>
+      </div>
+
+      <div style="height:80px"></div>
+    </div>
+
+    <!-- ==================== 我的页 ==================== -->
+    <div class="screen" id="screen-mine">
+      <div class="navbar">
+        <div class="nav-title">我的</div>
+      </div>
+
+      <div class="hero-mine">
+        <div class="hero-mine-bg"></div>
+        <div class="hero-mine-content">
+          <div class="hm-top">
+            <div class="hm-car">
+              <div class="hm-dot" id="mineDot" style="background:#00D4FF;box-shadow:0 0 14px #00D4FF"></div>
+              <div class="hm-text">
+                <span class="hm-brand" id="mineBrand">大众 速腾</span>
+                <span class="hm-plate" id="minePlate">鲁A·8K2M9</span>
+              </div>
+            </div>
+            <span class="hm-arrow">›</span>
+          </div>
+          <div class="hm-stats">
+            <div class="hs-cell">
+              <span class="hs-val" id="mineKm">6050</span>
+              <span class="hs-lbl">记录里程 km</span>
+            </div>
+            <div class="hs-sep"></div>
+            <div class="hs-cell">
+              <span class="hs-val" style="color:#00D4FF" id="mineAvg">6.89</span>
+              <span class="hs-lbl">平均油耗</span>
+            </div>
+            <div class="hs-sep"></div>
+            <div class="hs-cell">
+              <span class="hs-val" id="mineCost">4995</span>
+              <span class="hs-lbl">累计花费 元</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-title">数据概览</div>
+      <div class="ov-grid">
+        <div class="ov-cell" onclick="jumpTo(1)">
+          <span class="ov-val" id="ovRecords">11</span>
+          <span class="ov-lbl">加油记录</span>
+        </div>
+        <div class="ov-cell" onclick="jumpTo(3)">
+          <span class="ov-val" id="ovMaint">5</span>
+          <span class="ov-lbl">保养记录</span>
+        </div>
+        <div class="ov-cell" onclick="showToast('车辆管理')">
+          <span class="ov-val">2</span>
+          <span class="ov-lbl">车辆</span>
+        </div>
+      </div>
+
+      <div id="mineAlert"></div>
+
+      <div class="sec-title">功能</div>
+      <div class="menu-group">
+        <div class="menu-item" onclick="showToast('车辆管理')">
+          <div class="mi-ico">🚗</div>
+          <span class="mi-text">我的车库</span>
+          <span class="mi-extra">2 辆</span>
+          <span class="mi-arrow">›</span>
+        </div>
+        <div class="menu-item" onclick="jumpTo(3)">
+          <div class="mi-ico">🔧</div>
+          <span class="mi-text">保养档案</span>
+          <span class="mi-badge" id="miBadge">1</span>
+          <span class="mi-arrow">›</span>
+        </div>
+        <div class="menu-item" onclick="jumpTo(4)">
+          <div class="mi-ico">📊</div>
+          <span class="mi-text">数据分析</span>
+          <span class="mi-arrow">›</span>
+        </div>
+        <div class="menu-item" onclick="jumpTo(1)">
+          <div class="mi-ico">⛽</div>
+          <span class="mi-text">加油记录</span>
+          <span class="mi-arrow">›</span>
+        </div>
+      </div>
+
+      <div class="sec-title">其他</div>
+      <div class="menu-group">
+        <div class="menu-item" onclick="showToast('设置')">
+          <div class="mi-ico">⚙️</div>
+          <span class="mi-text">设置</span>
+          <span class="mi-arrow">›</span>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <span class="fn-title">车迹 · 养车记账</span>
+        <span class="fn-sub">本地存储，数据不上传服务器</span>
+      </div>
+      <div style="height:24px"></div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <!-- ==================== TabBar ==================== -->
+  <div class="tabbar" id="tabbar">
+    <div class="tab-item active" data-index="0" onclick="jumpTo(0)">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+        </svg>
+      </div>
+      <span>仪表盘</span>
+    </div>
+    <div class="tab-item" data-index="1" onclick="jumpTo(1)">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 7h16M4 12h16M4 17h10"/>
+        </svg>
+      </div>
+      <span>记录</span>
+    </div>
+    <div class="tab-item" data-index="6" onclick="jumpTo(6)">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 18V9M10 18V5M16 18v-6M22 18h-2"/>
+        </svg>
+      </div>
+      <span>分析</span>
+    </div>
+    <div class="tab-item" data-index="5" onclick="jumpTo(5)">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+      </div>
+      <span>我的</span>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   与小程序一致的业务逻辑
+   ================================================================ */
+
+const CONFIG = { SIM_MIN: 0 };
+
+/* ---------- 车辆 ---------- */
+const CARS = [
+  { id:'car_1', brand:'大众', model:'速腾', year:2021, plate:'鲁A·8K2M9', fuelType:'92#',
+    tankCapacity:55, color:'#00D4FF', odometer:48620 },
+  { id:'car_2', brand:'比亚迪', model:'宋 PLUS', year:2023, plate:'鲁A·3F7T2', fuelType:'92#',
+    tankCapacity:60, color:'#32D74B', odometer:21840 }
+];
+
+/* ---------- 加油记录（升序由 mileage 排序，与小程序一致）---------- */
+let FUEL_LOGS = [
+  { id:'f1', carId:'car_1', mileage:42100, liters:45.2, price:7.89, amount:356.63, isFull:true,  date:'2026-05-08', station:'中石化经十路站' },
+  { id:'f2', carId:'car_1', mileage:42680, liters:42.8, price:7.92, amount:338.98, isFull:true,  date:'2026-05-24', station:'中石化经十路站' },
+  { id:'f3', carId:'car_1', mileage:43150, liters:20.5, price:7.85, amount:160.93, isFull:false, date:'2026-06-06', station:'中石油舜耕路站' },
+  { id:'f4', carId:'car_1', mileage:43820, liters:50.6, price:8.12, amount:410.87, isFull:true,  date:'2026-06-21', station:'中石化经十路站' },
+  { id:'f5', carId:'car_1', mileage:44480, liters:49.3, price:8.05, amount:396.87, isFull:true,  date:'2026-07-09', station:'山东石化二环东' },
+  { id:'f6', carId:'car_1', mileage:45020, liters:43.1, price:7.76, amount:334.46, isFull:true,  date:'2026-07-26', station:'中石油舜耕路站' },
+  { id:'f7', carId:'car_1', mileage:45660, liters:48.9, price:7.68, amount:375.55, isFull:true,  date:'2026-08-14', station:'中石化经十路站' },
+  { id:'f8', carId:'car_1', mileage:46280, liters:24.6, price:7.71, amount:189.67, isFull:false, date:'2026-09-02', station:'中石化经十路站' },
+  { id:'f9', carId:'car_1', mileage:46920, liters:46.8, price:7.55, amount:353.34, isFull:true,  date:'2026-09-28', station:'山东石化二环东' },
+  { id:'f10',carId:'car_1', mileage:47530, liters:44.2, price:7.62, amount:336.80, isFull:true,  date:'2026-10-16', station:'中石化经十路站' },
+  { id:'f11',carId:'car_1', mileage:48150, liters:45.9, price:7.48, amount:343.33, isFull:true,  date:'2026-10-31', station:'中石油舜耕路站' },
+  { id:'f20',carId:'car_2', mileage:18600, liters:48.5, price:7.89, amount:382.67, isFull:true,  date:'2026-07-15', station:'中石化高新区站' },
+  { id:'f21',carId:'car_2', mileage:19250, liters:50.2, price:7.70, amount:386.54, isFull:true,  date:'2026-08-20', station:'中石化高新区站' },
+  { id:'f22',carId:'car_2', mileage:19920, liters:51.8, price:7.58, amount:392.64, isFull:true,  date:'2026-09-25', station:'山东石化奥体站' },
+  { id:'f23',carId:'car_2', mileage:20560, liters:46.7, price:7.65, amount:357.26, isFull:true,  date:'2026-10-22', station:'中石化高新区站' }
+];
+
+/* ---------- 保养模板 ---------- */
+const TEMPLATES = [
+  { key:'oil',     name:'更换机油机滤', icon:'🛢️', kmCycle:7500,  monthCycle:6,  desc:'全合成机油建议 7500km 或 6 个月' },
+  { key:'air',     name:'空气滤芯',     icon:'💨', kmCycle:15000, monthCycle:12, desc:'影响进气与油耗' },
+  { key:'cabin',   name:'空调滤芯',     icon:'❄️', kmCycle:15000, monthCycle:12, desc:'建议每年入夏前更换' },
+  { key:'spark',   name:'火花塞',       icon:'⚡', kmCycle:40000, monthCycle:36, desc:'影响点火与动力' },
+  { key:'brake',   name:'刹车片',       icon:'🛑', kmCycle:40000, monthCycle:36, desc:'磨损到 3mm 需更换' },
+  { key:'tire',    name:'轮胎换位',     icon:'⚙️', kmCycle:20000, monthCycle:24, desc:'让轮胎磨损更均匀' },
+  { key:'coolant', name:'防冻液',       icon:'🧊', kmCycle:60000, monthCycle:48, desc:'避免冬季冻裂水箱' },
+  { key:'battery', name:'电瓶检查',     icon:'🔋', kmCycle:50000, monthCycle:36, desc:'寿命一般 3-5 年' }
+];
+
+/* ---------- 保养记录 ---------- */
+const MAINT_LOGS = [
+  { id:'m1', carId:'car_1', key:'oil',   name:'更换机油机滤', icon:'🛢️', date:'2026-03-15', mileage:40200, cost:420, shop:'4S 店' },
+  { id:'m2', carId:'car_1', key:'air',   name:'空气滤芯',     icon:'💨', date:'2026-03-15', mileage:40200, cost:120, shop:'4S 店' },
+  { id:'m3', carId:'car_1', key:'cabin', name:'空调滤芯',     icon:'❄️', date:'2026-05-20', mileage:42400, cost:98,  shop:'自购更换' },
+  { id:'m4', carId:'car_1', key:'brake', name:'刹车片',       icon:'🛑', date:'2025-11-08', mileage:35200, cost:680, shop:'4S 店' },
+  { id:'m5', carId:'car_1', key:'tire',  name:'轮胎换位',     icon:'⚙️', date:'2026-01-20', mileage:37800, cost:80,  shop:'轮胎店' }
+];
+
+const TODAY = new Date();
+TODAY.setHours(0,0,0,0);
+
+/* ================================================================
+   油耗引擎（与小程序 services/fuel.js 完全一致）
+   ================================================================ */
+
+function calcConsumption(rows) {
+  const list = rows.slice().sort((a,b) => a.mileage - b.mileage || new Date(a.date) - new Date(b.date));
+  let prevFull = null, pendingL = 0, pendingC = 0;
+  const out = [];
+
+  for (const row of list) {
+    let consumption = null, segKm = 0, segL = 0, costPerKm = null;
+
+    if (prevFull && row.isFull === true) {
+      segKm = row.mileage - prevFull.mileage;
+      segL = pendingL + row.liters;
+      const segCost = pendingC + row.amount;
+      if (segKm > 0) {
+        consumption = (segL / segKm) * 100;
+        costPerKm = segCost / segKm;
+      }
+      prevFull = row; pendingL = 0; pendingC = 0;
+    } else {
+      if (row.isFull === true && !prevFull) {
+        prevFull = row; pendingL = 0; pendingC = 0;
+      } else {
+        pendingL += row.liters; pendingC += row.amount;
+      }
+    }
+    out.push({ ...row, segmentKm: segKm, segmentLiters: segL, consumption, costPerKm });
+  }
+  return out;
+}
+
+function summarize(rows) {
+  const computed = calcConsumption(rows);
+  const valid = computed.filter(r => r.consumption !== null);
+  const totL = valid.reduce((s,r) => s + r.segmentLiters, 0);
+  const totKm = valid.reduce((s,r) => s + r.segmentKm, 0);
+  const sorted = rows.slice().sort((a,b) => a.mileage - b.mileage);
+  const totalKm = sorted.length >= 2 ? sorted[sorted.length-1].mileage - sorted[0].mileage : 0;
+  const latest = valid.length ? valid[valid.length-1] : null;
+  let trend = null;
+  if (valid.length >= 2) trend = valid[valid.length-1].consumption - valid[valid.length-2].consumption;
+
+  const totalAmount = rows.reduce((s,r) => s + r.amount, 0);
+  return {
+    computed, valid,
+    avgConsumption: totKm > 0 ? (totL / totKm) * 100 : null,
+    latestConsumption: latest ? latest.consumption : null,
+    trend, totalAmount,
+    totalLiters: rows.reduce((s,r) => s + r.liters, 0),
+    totalKm,
+    recordCount: rows.length,
+    costPerKm: totalKm > 0 ? totalAmount / totalKm : null,
+    best: valid.length ? Math.min(...valid.map(r => r.consumption)) : null,
+    worst: valid.length ? Math.max(...valid.map(r => r.consumption)) : null
+  };
+}
+
+/* ================================================================
+   保养状态（与小程序 services/maintenance.js 一致）
+   ================================================================ */
+function addMonths(ts, months) {
+  const d = new Date(ts);
+  const day = d.getDate();
+  const year = d.getFullYear();
+  const month = d.getMonth() + months;
+  const lastDay = new Date(year, month + 1, 0).getDate();
+  d.setDate(1); d.setFullYear(year); d.setMonth(month);
+  d.setDate(Math.min(day, lastDay));
+  return d.getTime();
+}
+
+function parseDate(s) {
+  const [y,m,d] = s.split('-').map(Number);
+  return new Date(y, m-1, d, 0, 0, 0, 0).getTime();
+}
+
+function daysUntil(ts) {
+  return Math.round((new Date(ts).setHours(0,0,0,0) - TODAY.getTime()) / 86400000);
+}
+
+function calcMaintStatus(log, tpl, car) {
+  const cur = car.odometer;
+  if (!log) {
+    return { key:tpl.key, name:tpl.name, icon:tpl.icon, desc:tpl.desc,
+      lastDate:null, lastMileage:null, nextMileage:null, nextDate:null,
+      remainKm:null, remainDays:null, percent:0, status:'unknown', statusText:'暂无记录', severity:1 };
+  }
+  const lastDate = parseDate(log.date);
+  const lastMileage = log.mileage;
+  const nextMileage = tpl.kmCycle ? lastMileage + tpl.kmCycle : null;
+  const nextDate = tpl.monthCycle ? addMonths(lastDate, tpl.monthCycle) : null;
+  const remainKm = nextMileage !== null ? nextMileage - cur : null;
+  const remainDays = nextDate !== null ? daysUntil(nextDate) : null;
+
+  let percent = 0;
+  if (tpl.kmCycle) percent = Math.min(100, Math.max(0, ((cur - lastMileage) / tpl.kmCycle) * 100));
+
+  let status = 'normal';
+  if ((remainKm !== null && remainKm <= 0) || (remainDays !== null && remainDays <= 0)) status = 'overdue';
+  else if ((remainKm !== null && remainKm <= 500) || (remainDays !== null && remainDays <= 30)) status = 'soon';
+
+  const sev = { overdue:0, soon:1, normal:3 };
+  const txt = { overdue:'已超期', soon:'即将到期', normal:'正常' };
+  return { key:tpl.key, name:tpl.name, icon:tpl.icon, desc:tpl.desc,
+    lastDate, lastMileage, nextMileage, nextDate, remainKm, remainDays,
+    percent: Math.round(percent), status, statusText: txt[status], severity: sev[status] };
+}
+
+function getMaintBoard(car) {
+  const logs = MAINT_LOGS.filter(m => m.carId === car.id);
+  const latest = new Map();
+  logs.forEach(l => { if (!latest.has(l.key)) latest.set(l.key, l); });
+  const items = TEMPLATES.map(t => calcMaintStatus(latest.get(t.key) || null, t, car))
+    .sort((a,b) => a.severity - b.severity || (a.remainKm || 0) - (b.remainKm || 0));
+  const counts = { overdue:0, soon:0, normal:0, unknown:0 };
+  items.forEach(i => counts[i.status]++);
+  return { items, counts, logs };
+}
+
+/* ================================================================
+   状态与渲染
+   ================================================================ */
+let activeCarId = 'car_1';
+let currentFilter = 'all';
+let fullState = true;
+let amountTouched = false;
+
+function activeCar() { return CARS.find(c => c.id === activeCarId); }
+function carLogs() { return FUEL_LOGS.filter(l => l.carId === activeCarId); }
+
+/* ---------- 导航 ---------- */
+const SCREEN_MAP = {
+  0: { id:'screen-dashboard', tab:0 },
+  1: { id:'screen-records',   tab:1 },
+  2: { id:'screen-add',       tab:null },
+  3: { id:'screen-maintain',  tab:null },
+  4: { id:'screen-stats',     tab:2 },
+  5: { id:'screen-mine',      tab:3 },
+  6: { id:'screen-stats',     tab:2 }
+};
+
+function jumpTo(index) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const cfg = SCREEN_MAP[index];
+  if (!cfg) return;
+  const el = document.getElementById(cfg.id);
+  if (el) el.classList.add('active');
+
+  // tabbar 高亮
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  if (cfg.tab !== null) {
+    const tabEl = document.querySelector(`.tab-item[data-index="${cfg.tab === 2 ? 6 : cfg.tab === 3 ? 5 : cfg.tab}"]`);
+    if (tabEl) tabEl.classList.add('active');
+  }
+
+  // tabbar 显隐：记一笔、保养页不显示
+  document.getElementById('tabbar').style.display =
+    (cfg.tab === null) ? 'none' : 'flex';
+
+  if (index === 0) renderDashboard();
+  if (index === 1) renderRecords();
+  if (index === 4 || index === 6) renderStats();
+  if (index === 3) renderMaintain();
+  if (index === 5) renderMine();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 1600);
+}
+
+/* ================================================================
+   仪表盘 SVG 绘制
+   ================================================================ */
+function drawGauge(value) {
+  const svg = document.getElementById('gaugeSvg');
+  const W = 300, H = 200;
+  const cx = W/2, cy = H*0.9, R = 112, LW = 13;
+  const START = Math.PI, END = Math.PI*2;
+  const MAX = 15;
+
+  let html = '';
+
+  // 背景轨道
+  html += `<path d="M ${cx-R} ${cy} A ${R} ${R} 0 0 1 ${cx+R} ${cy}"
+    fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="${LW}" stroke-linecap="round"/>`;
+
+  // 刻度
+  const tickCount = 30;
+  for (let i = 0; i <= tickCount; i++) {
+    const t = i / tickCount;
+    const ang = START + t * Math.PI;
+    const major = i % 5 === 0;
+    const outer = R + LW/2 + 6;
+    const inner = outer - (major ? 10 : 5);
+    const x1 = cx + Math.cos(ang)*inner, y1 = cy + Math.sin(ang)*inner;
+    const x2 = cx + Math.cos(ang)*outer, y2 = cy + Math.sin(ang)*outer;
+    html += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"
+      stroke="${major ? 'rgba(168,180,194,0.5)' : 'rgba(107,119,135,0.32)'}" stroke-width="${major ? 2 : 1}"/>`;
+  }
+
+  // 数值弧
+  if (value > 0) {
+    const ratio = Math.min(1, value / MAX);
+    const endAng = START + ratio * Math.PI;
+    const largeArc = ratio > 0.5 ? 1 : 0;
+    const ex = cx + Math.cos(endAng)*R, ey = cy + Math.sin(endAng)*R;
+
+    // 发光层
+    html += `<path d="M ${cx-R} ${cy} A ${R} ${R} 0 ${largeArc} 1 ${ex.toFixed(1)} ${ey.toFixed(1)}"
+      fill="none" stroke="rgba(0,212,255,0.22)" stroke-width="${LW+12}" stroke-linecap="round"/>`;
+
+    // 主体渐变弧
+    html += `<defs>
+      <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#00B4D8"/>
+        <stop offset="50%" stop-color="#00D4FF"/>
+        <stop offset="100%" stop-color="#5CE1FF"/>
+      </linearGradient>
+    </defs>`;
+    html += `<path d="M ${cx-R} ${cy} A ${R} ${R} 0 ${largeArc} 1 ${ex.toFixed(1)} ${ey.toFixed(1)}"
+      fill="none" stroke="url(#gaugeGrad)" stroke-width="${LW}" stroke-linecap="round"/>`;
+
+    // 端点亮球
+    html += `<circle cx="${ex.toFixed(1)}" cy="${ey.toFixed(1)}" r="${LW/2+5}" fill="rgba(0,212,255,0.25)"/>`;
+    html += `<circle cx="${ex.toFixed(1)}" cy="${ey.toFixed(1)}" r="${LW/2-1}" fill="#B8F0FF"/>`;
+  }
+
+  // 量程数字
+  const lr = R - LW - 8;
+  html += `<text x="${cx-lr}" y="${cy+14}" fill="rgba(107,119,135,0.9)" font-size="11" text-anchor="middle" dominant-baseline="middle">0</text>`;
+  html += `<text x="${cx+lr}" y="${cy+14}" fill="rgba(107,119,135,0.9)" font-size="11" text-anchor="middle" dominant-baseline="middle">${MAX}</text>`;
+
+  svg.innerHTML = html;
+}
+
+/* ================================================================
+   渲染：仪表盘
+   ================================================================ */
+function renderDashboard() {
+  const car = activeCar();
+  const rows = carLogs();
+  const s = summarize(rows);
+  const board = getMaintBoard(car);
+
+  // 车辆信息
+  document.getElementById('carDot').style.background = car.color;
+  document.getElementById('carDot').style.boxShadow = `0 0 12px ${car.color}`;
+  document.getElementById('carName').textContent = car.brand;
+  document.getElementById('carModel').textContent = car.model;
+  document.getElementById('plateTag').textContent = car.plate;
+
+  // 里程条
+  document.getElementById('odoTotal').innerHTML = `${car.odometer}<small>km</small>`;
+  document.getElementById('odoRecorded').innerHTML = `${s.totalKm}<small>km</small>`;
+  document.getElementById('costPerKm').innerHTML =
+    `${s.costPerKm !== null ? s.costPerKm.toFixed(2) : '--'}<small>元</small>`;
+
+  // 仪表
+  const latest = s.latestConsumption;
+  drawGauge(latest || 0);
+  document.getElementById('gaugeNum').textContent = latest !== null ? latest.toFixed(1) : '--';
+  document.getElementById('gaugeSub').textContent = `共 ${s.recordCount} 次加油记录`;
+
+  // 趋势
+  const trendEl = document.getElementById('trendLine');
+  if (s.trend !== null) {
+    if (Math.abs(s.trend) < 0.05) {
+      trendEl.textContent = '与上次持平';
+      trendEl.className = 'trend-line trend-flat';
+    } else if (s.trend > 0) {
+      trendEl.textContent = `↑ ${s.trend.toFixed(1)} 比上次费油`;
+      trendEl.className = 'trend-line trend-up';
+    } else {
+      trendEl.textContent = `↓ ${Math.abs(s.trend).toFixed(1)} 比上次省油`;
+      trendEl.className = 'trend-line trend-down';
+    }
+  } else {
+    trendEl.textContent = '';
+  }
+
+  // 本月花费
+  const thisMonth = rows.filter(r => {
+    const d = new Date(r.date);
+    return d.getFullYear() === TODAY.getFullYear() && d.getMonth() === TODAY.getMonth();
+  }).reduce((a,r) => a + r.amount, 0);
+
+  document.getElementById('monthSpend').textContent = Math.round(thisMonth);
+  document.getElementById('recordCount').textContent = s.recordCount;
+  document.getElementById('totalKm').textContent = s.totalKm;
+
+  // 保养提醒
+  const alerts = board.items.filter(i => i.status === 'overdue' || i.status === 'soon').slice(0, 3);
+  const alertBox = document.getElementById('alertContainer');
+  if (alerts.length === 0) {
+    alertBox.innerHTML = `
+      <div class="all-good" onclick="jumpTo(3)">
+        <div class="ag-ico">✓</div>
+        <div class="ag-body">
+          <span class="ag-title">全部保养项目正常</span>
+          <span class="ag-sub">点击查看各项目剩余里程与天数</span>
+        </div>
+        <span class="ag-arrow">›</span>
+      </div>`;
+  } else {
+    alertBox.innerHTML = alerts.map(a => {
+      const hint = a.status === 'overdue'
+        ? (a.remainKm !== null && a.remainKm <= 0 ? `已超 ${Math.abs(a.remainKm)}km` : `已超 ${Math.abs(a.remainDays||0)} 天`)
+        : (a.remainKm !== null && a.remainKm <= 500 ? `还剩 ${a.remainKm}km` : `还剩 ${a.remainDays} 天`);
+      const barCls = a.status === 'overdue' ? 'bar-red' : 'bar-amber';
+      return `<div class="alert-card ${a.status}" onclick="jumpTo(3)">
+        <div class="alert-ico">${a.icon}</div>
+        <div class="alert-body">
+          <div class="alert-head">
+            <span class="alert-name">${a.name}</span>
+            <span class="badge ${a.status === 'overdue' ? 'badge-red' : 'badge-amber'}">${a.statusText}</span>
+          </div>
+          <div class="alert-bar"><i class="${barCls}" style="width:${Math.min(100,a.percent)}%"></i></div>
+          <span class="alert-hint">${hint}</span>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // 最近记录
+  const recent = s.computed.slice().sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
+  document.getElementById('recentList').innerHTML = recent.map(r => `
+    <div class="recent-item" onclick="jumpTo(1)">
+      <div class="ri-date-col">
+        <span class="ri-date">${r.date.slice(5)}</span>
+        <span class="ri-station">${r.station || '未记录'}</span>
+      </div>
+      <div class="ri-mid">
+        <span class="ri-mileage">${fmtThousands(r.mileage)}km</span>
+        ${r.consumption !== null
+          ? `<span class="ri-cons">${r.consumption.toFixed(2)} L/100km</span>`
+          : `<span class="ri-cons muted">未满油·不计油耗</span>`}
+      </div>
+      <div class="ri-right">
+        <span class="ri-amount">¥${fmtMoney(r.amount)}</span>
+        <span class="ri-liters">${r.liters.toFixed(1)}L</span>
+      </div>
+    </div>`).join('');
+
+  if (recent.length === 0) {
+    document.getElementById('recentList').innerHTML =
+      `<div style="padding:32px;text-align:center;color:var(--t3);font-size:12px">还没有加油记录</div>`;
+  }
+}
+
+/* ================================================================
+   渲染：记录列表
+   ================================================================ */
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(c =>
+    c.classList.toggle('active', c.dataset.filter === f));
+  renderRecords();
+}
+
+function renderRecords() {
+  const rows = carLogs();
+  const s = summarize(rows);
+
+  document.getElementById('recTotal').textContent = s.recordCount;
+  document.getElementById('recLiters').textContent = s.totalLiters.toFixed(1);
+  document.getElementById('recAmount').textContent = Math.round(s.totalAmount);
+
+  let display = s.computed.slice().sort((a,b) => new Date(b.date) - new Date(a.date));
+  if (currentFilter === 'full') display = display.filter(r => r.isFull);
+  if (currentFilter === 'partial') display = display.filter(r => !r.isFull);
+
+  document.getElementById('filterTotal').textContent =
+    '¥' + Math.round(display.reduce((a,r) => a + r.amount, 0));
+
+  const weekdays = ['周日','周一','周二','周三','周四','周五','周六'];
+
+  document.getElementById('recordList').innerHTML = display.map(r => {
+    const d = new Date(r.date);
+    return `<div class="rec-card ${r.isFull ? 'is-full' : ''}">
+      <div class="rc-date-col">
+        <span class="rc-date">${r.date}</span>
+        <span class="rc-weekday">${weekdays[d.getDay()]}</span>
+      </div>
+      <div class="rc-main">
+        <div class="rc-row1">
+          <span class="rc-mileage">${fmtThousands(r.mileage)}</span>
+          <span class="rc-km">km</span>
+          <span class="${r.isFull ? 'tag-full' : 'tag-partial'}">${r.isFull ? '满' : '非满'}</span>
+        </div>
+        <div class="rc-row2">
+          <span class="rc-detail">${r.liters.toFixed(2)}L</span>
+          <span class="rc-dot">·</span>
+          <span class="rc-detail">${r.price.toFixed(2)}元/L</span>
+          ${r.station ? `<span class="rc-dot">·</span><span class="rc-station">${r.station}</span>` : ''}
+        </div>
+        ${r.consumption !== null
+          ? `<div class="rc-cons-wrap">
+               <span class="rcc-val">${r.consumption.toFixed(2)}</span>
+               <span class="rcc-unit">L/100km</span>
+               <span class="rcc-sep">|</span>
+               <span class="rcc-cost">${r.costPerKm.toFixed(2)} 元/km</span>
+             </div>`
+          : `<span class="rc-nocons">未加满，将与下次满油合并计算</span>`}
+      </div>
+      <div class="rc-amount-col">
+        <span class="rc-amount">¥${fmtMoney(r.amount)}</span>
+        <span class="rc-arrow">›</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  if (display.length === 0) {
+    document.getElementById('recordList').innerHTML =
+      `<div style="padding:48px;text-align:center;color:var(--t3);font-size:12.5px">
+        ${currentFilter === 'all' ? '还没有加油记录' : (currentFilter === 'full' ? '没有已加满的记录' : '没有未加满的记录')}
+      </div>`;
+  }
+}
+
+/* ================================================================
+   记一笔：实时预览
+   ================================================================ */
+function toggleFull() {
+  fullState = !fullState;
+  document.getElementById('switchFull').classList.toggle('on', fullState);
+  document.getElementById('warnTip').style.display = fullState ? 'none' : 'flex';
+  updatePreview();
+}
+
+function autoCalcAmount() {
+  if (amountTouched) return;
+  const l = parseFloat(document.getElementById('inLiters').value);
+  const p = parseFloat(document.getElementById('inPrice').value);
+  const amountEl = document.getElementById('inAmount');
+  if (l > 0 && p > 0) amountEl.value = (l * p).toFixed(2);
+  else amountEl.value = '';
+}
+
+function updatePreview() {
+  const mileage = parseFloat(document.getElementById('inMileage').value);
+  const liters = parseFloat(document.getElementById('inLiters').value);
+  const price = parseFloat(document.getElementById('inPrice').value);
+
+  const card = document.getElementById('previewCard');
+  const badge = document.getElementById('pvBadge');
+  const val = document.getElementById('pvValue');
+  const hint = document.getElementById('pvHint');
+
+  if (!mileage || !liters || mileage <= 0 || liters <= 0) {
+    card.classList.remove('has-value');
+    badge.textContent = '待计算';
+    badge.className = 'pv-badge';
+    val.innerHTML = '<span class="pv-dash">--</span>';
+    hint.textContent = '填好里程、升数、油价，这里会实时算出本次油耗';
+    return;
+  }
+
+  const temp = {
+    id: '__preview__', carId: activeCarId, mileage, liters, price,
+    amount: liters * price, isFull: fullState, date: todayStr()
+  };
+  const all = carLogs().concat([temp]);
+  const computed = calcConsumption(all);
+  const mine = computed.find(r => r.id === '__preview__');
+
+  if (mine && mine.consumption !== null) {
+    card.classList.add('has-value');
+    badge.textContent = '已计算';
+    badge.className = 'pv-badge ok';
+    val.innerHTML = `<span class="pv-num">${mine.consumption.toFixed(2)}</span><span class="pv-unit">L/100km</span>`;
+    hint.textContent = `本次油耗 ${mine.consumption.toFixed(2)} L/100km（${mine.segmentKm}km 用了 ${mine.segmentLiters.toFixed(1)}L）`;
+  } else {
+    card.classList.remove('has-value');
+    badge.textContent = '待计算';
+    badge.className = 'pv-badge';
+    val.innerHTML = '<span class="pv-dash">--</span>';
+    if (!fullState) {
+      hint.textContent = '未勾选加满，本次不单独计算油耗，会和下次加满一起结算';
+    } else {
+      hint.textContent = '这是第一条加满记录，作为油耗计算起点，下次加满后出结果';
+    }
+  }
+}
+
+function todayStr() {
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+}
+
+function submitFuel() {
+  const mileage = parseFloat(document.getElementById('inMileage').value);
+  const liters = parseFloat(document.getElementById('inLiters').value);
+  const price = parseFloat(document.getElementById('inPrice').value);
+  const amountRaw = document.getElementById('inAmount').value;
+  const station = document.getElementById('inStation').value || '未记录';
+
+  if (!mileage || mileage <= 0) { showToast('请填写当前里程'); return; }
+  if (!liters || liters <= 0) { showToast('请填写加油升数'); return; }
+  if (!price || price <= 0) { showToast('请填写油价'); return; }
+  if (liters > 200) { showToast('加油量超过 200L，请检查'); return; }
+  if (price > 20) { showToast('油价超过 20 元/L，请检查'); return; }
+
+  const rows = carLogs().filter(r => r.id !== '__preview__');
+  if (rows.length > 0) {
+    const maxM = Math.max(...rows.map(r => r.mileage));
+    if (mileage < maxM) { showToast(`里程不能小于已有最大里程 ${maxM}km`); return; }
+  }
+
+  const amount = amountRaw ? parseFloat(amountRaw) : +(liters * price).toFixed(2);
+
+  FUEL_LOGS.push({
+    id: 'f_' + Date.now(),
+    carId: activeCarId,
+    mileage, liters: +liters.toFixed(2), price: +price.toFixed(2),
+    amount: +amount.toFixed(2),
+    isFull: fullState,
+    date: todayStr(),
+    station
+  });
+
+  // 同步车辆里程
+  const car = activeCar();
+  if (mileage > car.odometer) car.odometer = mileage;
+
+  showToast('已记录');
+
+  // 清空表单
+  ['inMileage','inLiters','inPrice','inAmount','inStation'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  amountTouched = false;
+  updatePreview();
+
+  setTimeout(() => jumpTo(0), 700);
+}
+
+/* ================================================================
+   渲染：统计分析
+   ================================================================ */
+function renderStats() {
+  const car = activeCar();
+  const rows = carLogs();
+  const s = summarize(rows);
+
+  document.getElementById('avgNum').textContent = s.avgConsumption !== null ? s.avgConsumption.toFixed(2) : '--';
+  document.getElementById('bestCons').textContent = s.best !== null ? s.best.toFixed(2) : '--';
+  document.getElementById('worstCons').textContent = s.worst !== null ? s.worst.toFixed(2) : '--';
+  document.getElementById('costPerKm2').textContent = s.costPerKm !== null ? s.costPerKm.toFixed(2) + ' 元' : '--';
+
+  const maintCost = getMaintBoard(car).logs.reduce((a,m) => a + (m.cost||0), 0);
+  document.getElementById('costFuel').textContent = '¥' + Math.round(s.totalAmount);
+  document.getElementById('costMaint').textContent = '¥' + Math.round(maintCost);
+  document.getElementById('costTotal').textContent = '¥' + Math.round(s.totalAmount + maintCost);
+
+  document.getElementById('kmRecorded').textContent = s.totalKm;
+
+  const thisMonth = rows.filter(r => {
+    const d = new Date(r.date);
+    return d.getFullYear() === TODAY.getFullYear() && d.getMonth() === TODAY.getMonth();
+  }).reduce((a,r) => a + r.amount, 0);
+  document.getElementById('kmMonth').textContent = Math.round(thisMonth);
+
+  drawLineChart(s.valid);
+  drawBarChart(rows);
+}
+
+function drawLineChart(valid) {
+  const svg = document.getElementById('lineChart');
+  document.getElementById('pointHint').textContent = `共 ${valid.length} 个数据点`;
+
+  if (valid.length < 2) {
+    svg.innerHTML = `<text x="160" y="88" fill="#47525F" font-size="11" text-anchor="middle">数据不足，至少需要 2 次加满记录</text>`;
+    return;
+  }
+
+  const W = 320, H = 175;
+  const PL = 32, PR = 10, PT = 16, PB = 26;
+  const pw = W - PL - PR, ph = H - PT - PB;
+
+  const vals = valid.map(r => r.consumption);
+  const rMin = Math.min(...vals), rMax = Math.max(...vals);
+  const span = rMax - rMin || 1;
+  const yMin = Math.max(0, rMin - span * 0.25);
+  const yMax = rMax + span * 0.25;
+
+  const xOf = i => PL + (i / (valid.length - 1)) * pw;
+  const yOf = v => PT + ph - ((v - yMin) / (yMax - yMin)) * ph;
+
+  let html = '';
+
+  // 网格
+  for (let i = 0; i <= 4; i++) {
+    const v = yMin + ((yMax - yMin) / 4) * i;
+    const y = yOf(v);
+    html += `<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>`;
+    html += `<text x="${PL-5}" y="${y+3}" fill="#47525F" font-size="8.5" text-anchor="end">${v.toFixed(1)}</text>`;
+  }
+
+  // 面积
+  let areaPath = `M ${xOf(0)} ${yOf(vals[0])}`;
+  for (let i = 1; i < valid.length; i++) {
+    const x0 = xOf(i-1), y0 = yOf(vals[i-1]);
+    const x1 = xOf(i), y1 = yOf(vals[i]);
+    const cx = (x0 + x1) / 2;
+    areaPath += ` C ${cx} ${y0}, ${cx} ${y1}, ${x1} ${y1}`;
+  }
+  const areaClose = areaPath + ` L ${xOf(valid.length-1)} ${PT+ph} L ${xOf(0)} ${PT+ph} Z`;
+  html += `<defs>
+    <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(0,212,255,0.28)"/>
+      <stop offset="100%" stop-color="rgba(0,212,255,0)"/>
+    </linearGradient>
+  </defs>`;
+  html += `<path d="${areaClose}" fill="url(#areaGrad)"/>`;
+
+  // 折线
+  html += `<path d="${areaPath}" fill="none" stroke="#00D4FF" stroke-width="2.2"
+    stroke-linejoin="round" stroke-linecap="round" filter="drop-shadow(0 0 4px rgba(0,212,255,.6))"/>`;
+
+  // 数据点
+  valid.forEach((r, i) => {
+    html += `<circle cx="${xOf(i)}" cy="${yOf(r.consumption)}" r="3.6" fill="#0B0F17"/>`;
+    html += `<circle cx="${xOf(i)}" cy="${yOf(r.consumption)}" r="2.5" fill="#00D4FF"/>`;
+  });
+
+  // 最后一点高亮
+  const li = valid.length - 1;
+  const lx = xOf(li), ly = yOf(vals[li]);
+  html += `<circle cx="${lx}" cy="${ly}" r="7" fill="rgba(0,212,255,0.2)"/>`;
+  html += `<text x="${lx > W-40 ? lx-6 : lx}" y="${ly-9}" fill="#00D4FF" font-size="9.5"
+    font-weight="700" text-anchor="${lx > W-40 ? 'end' : 'middle'}">${vals[li].toFixed(2)}</text>`;
+
+  // X 轴
+  const idxs = valid.length <= 4 ? valid.map((_,i)=>i) : [0, Math.floor((valid.length-1)/2), valid.length-1];
+  idxs.forEach(i => {
+    html += `<text x="${xOf(i)}" y="${PT+ph+13}" fill="#47525F" font-size="8" text-anchor="middle">${valid[i].date.slice(5)}</text>`;
+  });
+
+  svg.innerHTML = html;
+}
+
+function drawBarChart(rows) {
+  const svg = document.getElementById('barChart');
+  const W = 320, H = 155;
+  const PL = 32, PR = 10, PT = 20, PB = 24;
+  const pw = W - PL - PR, ph = H - PT - PB;
+
+  // 近 6 个月
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(TODAY.getFullYear(), TODAY.getMonth() - i, 1);
+    months.push({
+      ym: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,
+      label: `${d.getMonth()+1}月`,
+      amount: 0
+    });
+  }
+  rows.forEach(r => {
+    const d = new Date(r.date);
+    const ym = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const m = months.find(x => x.ym === ym);
+    if (m) m.amount += r.amount;
+  });
+
+  const maxVal = Math.max(...months.map(m => m.amount), 1);
+  const yMax = maxVal * 1.18;
+  const slotW = pw / months.length;
+  const barW = Math.min(26, slotW * 0.52);
+  const yOf = v => PT + ph - (v / yMax) * ph;
+
+  let html = '';
+
+  // 网格
+  for (let i = 0; i <= 3; i++) {
+    const v = (yMax / 3) * i;
+    const y = yOf(v);
+    html += `<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>`;
+    html += `<text x="${PL-5}" y="${y+3}" fill="#47525F" font-size="8.5" text-anchor="end">${v >= 1000 ? (v/1000).toFixed(1)+'k' : Math.round(v)}</text>`;
+  }
+
+  months.forEach((m, i) => {
+    const cx = PL + slotW * i + slotW / 2;
+    const isLast = i === months.length - 1;
+
+    if (m.amount <= 0) {
+      html += `<circle cx="${cx}" cy="${PT+ph-3}" r="2" fill="#47525F"/>`;
+    } else {
+      const barH = (m.amount / yMax) * ph;
+      const y = PT + ph - barH;
+      const x = cx - barW / 2;
+      const r = Math.min(barW/2, 5);
+
+      const gradId = isLast ? 'barAmber' : 'barCyan';
+      html += `<defs>
+        <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+          ${isLast
+            ? `<stop offset="0%" stop-color="#FFC44D"/><stop offset="100%" stop-color="rgba(255,159,10,0.32)"/>`
+            : `<stop offset="0%" stop-color="rgba(0,212,255,0.85)"/><stop offset="100%" stop-color="rgba(0,212,255,0.18)"/>`}
+        </linearGradient>
+      </defs>`;
+
+      html += `<path d="M ${x} ${PT+ph} L ${x} ${y+r} Q ${x} ${y} ${x+r} ${y}
+        L ${x+barW-r} ${y} Q ${x+barW} ${y} ${x+barW} ${y+r} L ${x+barW} ${PT+ph} Z"
+        fill="url(#${gradId})"/>`;
+
+      html += `<text x="${cx}" y="${y-4}" fill="${isLast ? '#FFC44D' : 'rgba(168,180,194,0.85)'}"
+        font-size="8.5" font-weight="700" text-anchor="middle">${Math.round(m.amount)}</text>`;
+    }
+
+    html += `<text x="${cx}" y="${PT+ph+13}" fill="${isLast ? '#FFC44D' : '#47525F'}"
+      font-size="8.5" text-anchor="middle">${m.label}</text>`;
+  });
+
+  svg.innerHTML = html;
+}
+
+/* ================================================================
+   渲染：保养
+   ================================================================ */
+function switchMaintTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(t =>
+    t.classList.toggle('active', t.textContent.includes(tab === 'board' ? '看板' : '历史')));
+  document.getElementById('maintBoard').style.display = tab === 'board' ? 'block' : 'none';
+  document.getElementById('maintHistory').style.display = tab === 'history' ? 'block' : 'none';
+}
+
+function renderMaintain() {
+  const car = activeCar();
+  const { items, counts, logs } = getMaintBoard(car);
+
+  // 健康卡
+  const hc = document.getElementById('healthCard');
+  const isDanger = counts.overdue > 0;
+  const isWarn = !isDanger && counts.soon > 0;
+  hc.className = 'health-card ' + (isDanger ? 'danger' : (isWarn ? 'warn' : 'good'));
+  document.getElementById('healthIco').textContent = isDanger ? '⚠️' : (isWarn ? '⏰' : '✓');
+  document.getElementById('healthTitle').textContent =
+    isDanger ? `${counts.overdue} 项已超期` : (isWarn ? `${counts.soon} 项即将到期` : '保养状态良好');
+  document.getElementById('healthSub').textContent =
+    `超期 ${counts.overdue} · 即将 ${counts.soon} · 正常 ${counts.normal} · 无记录 ${counts.unknown}`;
+
+  // 看板
+  document.getElementById('boardList').innerHTML = items.map(it => {
+    const kmText = it.remainKm !== null
+      ? (it.remainKm >= 0 ? `${it.remainKm}km` : `超 ${Math.abs(it.remainKm)}km`) : '--';
+    const dayText = it.remainDays !== null
+      ? (it.remainDays >= 0 ? `${it.remainDays}天` : `超 ${Math.abs(it.remainDays)}天`) : '--';
+    const kmWarn = it.remainKm !== null && it.remainKm <= 0;
+    const dayWarn = it.remainDays !== null && it.remainDays <= 0;
+    const barCls = it.status === 'overdue' ? 'bg-red'
+      : it.status === 'soon' ? 'bg-amber'
+      : it.status === 'unknown' ? 'bg-grey' : 'bg-green';
+    const badgeCls = it.status === 'overdue' ? 'badge-red'
+      : it.status === 'soon' ? 'badge-amber'
+      : it.status === 'unknown' ? 'badge-cyan' : 'badge-green';
+
+    return `<div class="board-item ${it.status}" onclick="showToast('记录 ${it.name}')">
+      <div class="bi-head">
+        <div class="bi-ico">${it.icon}</div>
+        <div class="bi-title-area">
+          <span class="bi-name">${it.name}</span>
+          <span class="bi-desc">${it.desc}</span>
+        </div>
+        <span class="badge ${badgeCls}">${it.statusText}</span>
+      </div>
+      <div class="bi-bar"><i class="${barCls}" style="width:${Math.max(2, Math.min(100, it.percent))}%"></i></div>
+      <div class="bi-grid">
+        <div class="big-cell">
+          <span class="bc-lbl">剩余里程</span>
+          <span class="bc-val" style="${kmWarn ? 'color:#FF3B5C' : ''}">${kmText}</span>
+        </div>
+        <div class="big-cell">
+          <span class="bc-lbl">剩余时间</span>
+          <span class="bc-val" style="${dayWarn ? 'color:#FF3B5C' : ''}">${dayText}</span>
+        </div>
+        <div class="big-cell">
+          <span class="bc-lbl">下次里程</span>
+          <span class="bc-val muted">${it.nextMileage !== null ? fmtThousands(it.nextMileage) : '--'}km</span>
+        </div>
+      </div>
+      <div class="bi-foot">
+        <span class="bf-text">上次 ${it.lastDate ? new Date(it.lastDate).toISOString().slice(0,10) : '无记录'}${it.lastMileage ? ' · ' + it.lastMileage + 'km' : ''}</span>
+        <span class="bf-action">记录 ›</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // 历史
+  document.getElementById('historyList').innerHTML = logs
+    .sort((a,b) => new Date(b.date) - new Date(a.date))
+    .map(l => `<div class="rec-card">
+      <div style="width:34px;height:34px;border-radius:8px;background:rgba(191,90,242,.11);
+        display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${l.icon}</div>
+      <div class="rc-main">
+        <div class="rc-row1" style="justify-content:space-between">
+          <span style="font-size:13.5px;font-weight:600;color:var(--t1)">${l.name}</span>
+          <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--t2)">¥${l.cost}</span>
+        </div>
+        <div class="rc-row2">
+          <span class="rc-detail">${l.date}</span>
+          <span class="rc-dot">·</span>
+          <span class="rc-detail">${fmtThousands(l.mileage)}km</span>
+          <span class="rc-dot">·</span>
+          <span class="rc-station">${l.shop}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+/* ================================================================
+   渲染：我的
+   ================================================================ */
+function renderMine() {
+  const car = activeCar();
+  const rows = carLogs();
+  const s = summarize(rows);
+  const board = getMaintBoard(car);
+  const maintCost = board.logs.reduce((a,m) => a + (m.cost||0), 0);
+
+  document.getElementById('mineDot').style.background = car.color;
+  document.getElementById('mineDot').style.boxShadow = `0 0 14px ${car.color}`;
+  document.getElementById('mineBrand').textContent = `${car.brand} ${car.model}`;
+  document.getElementById('minePlate').textContent = car.plate;
+  document.getElementById('mineKm').textContent = s.totalKm;
+  document.getElementById('mineAvg').textContent = s.avgConsumption !== null ? s.avgConsumption.toFixed(2) : '--';
+  document.getElementById('mineCost').textContent = Math.round(s.totalAmount + maintCost);
+
+  document.getElementById('ovRecords').textContent = s.recordCount;
+  document.getElementById('ovMaint').textContent = board.logs.length;
+
+  const alertCount = board.counts.overdue + board.counts.soon;
+  const badge = document.getElementById('miBadge');
+  if (alertCount > 0) {
+    badge.textContent = alertCount;
+    badge.style.display = 'flex';
+  } else {
+    badge.style.display = 'none';
+  }
+
+  const mineAlert = document.getElementById('mineAlert');
+  if (alertCount > 0) {
+    mineAlert.innerHTML = `<div class="alert-banner" onclick="jumpTo(3)">
+      <span class="ab-ico">⚠️</span>
+      <div class="ab-body">
+        <span class="ab-title">有 ${alertCount} 项保养需要处理</span>
+        <span class="ab-sub">点击查看详情</span>
+      </div>
+      <span class="ab-arrow">›</span>
+    </div>`;
+  } else {
+    mineAlert.innerHTML = '';
+  }
+}
+
+/* ================================================================
+   工具
+   ================================================================ */
+function fmtMoney(n) {
+  if (Number.isInteger(n)) return String(n);
+  return n.toFixed(2);
+}
+function fmtThousands(n) {
+  return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+/* ================================================================
+   初始化
+   ================================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  // 日期
+  document.getElementById('todayText').textContent = todayStr();
+
+  // 时钟
+  function tickClock() {
+    const d = new Date();
+    document.getElementById('clock').textContent =
+      `${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
+  }
+  tickClock();
+  setInterval(tickClock, 30000);
+
+  // 表单事件
+  const bind = (id, fn) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', fn);
+  };
+  bind('inMileage', updatePreview);
+  bind('inLiters', () => { autoCalcAmount(); updatePreview(); });
+  bind('inPrice', () => { autoCalcAmount(); updatePreview(); });
+  bind('inAmount', () => { amountTouched = true; });
+
+  // 初始渲染
+  renderDashboard();
+  renderRecords();
+  renderStats();
+  renderMaintain();
+  renderMine();
+});
+</script>
+</body>
+</html>

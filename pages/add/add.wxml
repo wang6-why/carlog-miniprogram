@@ -1,0 +1,259 @@
+<view class="page add-page">
+
+  <!-- ============ 加油表单 ============ -->
+  <block wx:if="{{type === 'fuel'}}">
+
+    <!-- 实时预览卡（本次油耗）-->
+    <view class="preview-card {{previewConsumption ? 'has-value' : ''}}">
+      <view class="pv-top">
+        <text class="pv-label">本次油耗预览</text>
+        <view wx:if="{{previewConsumption}}" class="pv-badge">已计算</view>
+        <view wx:else class="pv-badge muted">待计算</view>
+      </view>
+      <view wx:if="{{previewConsumption}}" class="pv-value">
+        <text class="reading reading-lg pv-num">{{previewConsumption}}</text>
+        <text class="unit">L/100km</text>
+      </view>
+      <view wx:else class="pv-value placeholder">
+        <text class="pv-dash">--</text>
+      </view>
+      <text class="pv-hint">{{previewText || '填好里程、升数、油价，这里会实时算出本次油耗'}}</text>
+    </view>
+
+    <!-- 卡片：里程 -->
+    <view class="card input-card">
+      <view class="field big-field">
+        <text class="field-label">当前里程</text>
+        <view class="input-side">
+          <input
+            class="field-input big-input"
+            type="digit"
+            value="{{mileage}}"
+            placeholder="0"
+            placeholder-class="field-input-placeholder"
+            bindinput="onMileageInput"
+          />
+          <text class="input-unit">km</text>
+        </view>
+      </view>
+      <view wx:if="{{lastMileage && !isEdit}}" class="field-tip" bindtap="onUseLastMileage">
+        <text class="ft-icon">↺</text>
+        <text class="ft-text">上次记录里程 {{lastMileage}}km，点此填入</text>
+      </view>
+
+      <view class="field big-field">
+        <text class="field-label">加油量</text>
+        <view class="input-side">
+          <input
+            class="field-input big-input"
+            type="digit"
+            value="{{liters}}"
+            placeholder="0.00"
+            placeholder-class="field-input-placeholder"
+            bindinput="onLitersInput"
+          />
+          <text class="input-unit">L</text>
+        </view>
+      </view>
+
+      <view class="field big-field">
+        <text class="field-label">油价</text>
+        <view class="input-side">
+          <input
+            class="field-input big-input"
+            type="digit"
+            value="{{price}}"
+            placeholder="0.00"
+            placeholder-class="field-input-placeholder"
+            bindinput="onPriceInput"
+          />
+          <text class="input-unit">元/L</text>
+        </view>
+      </view>
+
+      <view class="field big-field">
+        <view class="label-side">
+          <text class="field-label">总金额</text>
+          <text class="label-sub">自动计算，可手动改</text>
+        </view>
+        <view class="input-side">
+          <input
+            class="field-input big-input"
+            type="digit"
+            value="{{amount}}"
+            placeholder="0.00"
+            placeholder-class="field-input-placeholder"
+            bindinput="onAmountInput"
+          />
+          <text class="input-unit">元</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 是否加满：这个开关决定油耗能不能算，要给足解释 -->
+    <view class="card full-card">
+      <view class="row-between">
+        <view class="lb-side">
+          <text class="lb-title">本次是否加满</text>
+          <text class="lb-sub">只有两次加满之间才能算出准确油耗</text>
+        </view>
+        <switch
+          checked="{{isFull}}"
+          color="#00D4FF"
+          bindchange="onFullChange"
+        />
+      </view>
+      <view wx:if="{{!isFull}}" class="warn-tip">
+        <text class="wt-icon">!</text>
+        <text class="wt-text">不加满时无法确定剩余油量，这笔会挂起，等下次加满时一起结算</text>
+      </view>
+    </view>
+
+    <!-- 更多信息 -->
+    <view class="card input-card">
+      <picker mode="date" value="{{dateText}}" bindchange="onDateChange">
+        <view class="field">
+          <text class="field-label">日期</text>
+          <view class="picker-value">
+            <text>{{dateText}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </view>
+      </picker>
+
+      <view class="field">
+        <text class="field-label">加油站</text>
+        <input
+          class="field-input"
+          value="{{station}}"
+          placeholder="选填"
+          placeholder-class="field-input-placeholder"
+          bindinput="onStationInput"
+        />
+      </view>
+
+      <view class="field">
+        <text class="field-label">备注</text>
+        <input
+          class="field-input"
+          value="{{note}}"
+          placeholder="选填，如「跑高速前加满」"
+          placeholder-class="field-input-placeholder"
+          bindinput="onNoteInput"
+        />
+      </view>
+    </view>
+
+  </block>
+
+  <!-- ============ 保养表单 ============ -->
+  <block wx:else>
+
+    <view class="section-title" style="margin-top: 24rpx;">保养项目</view>
+    <view class="tpl-grid">
+      <view
+        class="tpl-item {{item.key === maintKey ? 'active' : ''}}"
+        wx:for="{{maintTemplates}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onMaintTemplateTap"
+      >
+        <text class="tpl-icon">{{item.icon}}</text>
+        <view class="tpl-body">
+          <text class="tpl-name">{{item.name}}</text>
+          <text class="tpl-cycle">
+            {{item.kmCycle}}km / {{item.monthCycle}}月
+          </text>
+        </view>
+        <text wx:if="{{item.key === maintKey}}" class="tpl-check">✓</text>
+      </view>
+    </view>
+
+    <view class="card input-card" style="margin-top: 24rpx;">
+      <view class="field big-field">
+        <text class="field-label">保养里程</text>
+        <view class="input-side">
+          <input
+            class="field-input big-input"
+            type="digit"
+            value="{{maintMileage}}"
+            placeholder="0"
+            placeholder-class="field-input-placeholder"
+            bindinput="onMaintMileageInput"
+          />
+          <text class="input-unit">km</text>
+        </view>
+      </view>
+
+      <view class="field big-field">
+        <text class="field-label">花费</text>
+        <view class="input-side">
+          <input
+            class="field-input big-input"
+            type="digit"
+            value="{{maintCost}}"
+            placeholder="0"
+            placeholder-class="field-input-placeholder"
+            bindinput="onMaintCostInput"
+          />
+          <text class="input-unit">元</text>
+        </view>
+      </view>
+
+      <picker mode="date" value="{{maintDateText}}" bindchange="onMaintDateChange">
+        <view class="field">
+          <text class="field-label">保养日期</text>
+          <view class="picker-value">
+            <text>{{maintDateText}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </view>
+      </picker>
+
+      <view class="field">
+        <text class="field-label">维修店</text>
+        <input
+          class="field-input"
+          value="{{maintShop}}"
+          placeholder="选填"
+          placeholder-class="field-input-placeholder"
+          bindinput="onMaintShopInput"
+        />
+      </view>
+
+      <view class="field">
+        <text class="field-label">备注</text>
+        <input
+          class="field-input"
+          value="{{maintNote}}"
+          placeholder="选填"
+          placeholder-class="field-input-placeholder"
+          bindinput="onMaintNoteInput"
+        />
+      </view>
+    </view>
+
+    <view class="maint-hint">
+      <text class="mh-icon">💡</text>
+      <text class="mh-text">保养周期按「里程或时间，先到者提醒」。只记里程的话，开得少的车会一直等不到提醒。</text>
+    </view>
+
+  </block>
+
+  <!-- ============ 底部操作 ============ -->
+  <view class="bottom-bar">
+    <button
+      wx:if="{{isEdit}}"
+      class="btn btn-ghost del-btn"
+      bindtap="onDelete"
+    >删除</button>
+    <button
+      class="btn btn-primary flex-1 {{submitting ? 'btn-disabled' : ''}}"
+      bindtap="onSubmit"
+      disabled="{{submitting}}"
+    >
+      {{submitting ? '保存中…' : (isEdit ? '保存修改' : '保存')}}
+    </button>
+  </view>
+
+</view>

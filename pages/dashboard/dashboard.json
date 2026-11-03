@@ -1,0 +1,6 @@
+{
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "gauge": "/components/gauge/gauge"
+  }
+}

@@ -1,0 +1,88 @@
+<view class="page settings-page">
+
+  <!-- ============ 提醒设置 ============ -->
+  <view class="section-title">提醒</view>
+
+  <view class="menu-group">
+    <view class="menu-item">
+      <view class="mi-left">
+        <text class="mi-text">保养到期提醒</text>
+        <text class="mi-sub">超期或即将到期时在首页提示</text>
+      </view>
+      <switch checked="{{remindMaintain}}" color="#00D4FF" bindchange="onToggleMaintain" />
+    </view>
+
+    <view class="menu-item">
+      <view class="mi-left">
+        <text class="mi-text">加油频率提醒</text>
+        <text class="mi-sub">长时间未记录时提示补录</text>
+      </view>
+      <switch checked="{{remindFuel}}" color="#00D4FF" bindchange="onToggleFuel" />
+    </view>
+  </view>
+
+  <!-- ============ 数据管理 ============ -->
+  <view class="section-title">数据</view>
+
+  <view class="menu-group">
+    <view class="menu-item" bindtap="onExport">
+      <view class="mi-left">
+        <text class="mi-text">导出数据</text>
+        <text class="mi-sub">复制为 JSON 文本，可自行备份</text>
+      </view>
+      <text class="mi-arrow">›</text>
+    </view>
+
+    <view class="menu-item">
+      <view class="mi-left">
+        <text class="mi-text">存储占用</text>
+        <text class="mi-sub">{{cacheCount}} 项数据 · 约 {{cacheKb}}KB</text>
+      </view>
+    </view>
+
+    <view class="menu-item" bindtap="onClearCache">
+      <view class="mi-left">
+        <text class="mi-text">清理缓存</text>
+        <text class="mi-sub">不删除业务数据</text>
+      </view>
+      <text class="mi-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- ============ 危险操作 ============ -->
+  <view class="section-title">危险操作</view>
+
+  <view class="danger-zone">
+    <view class="dz-text">
+      <text class="dz-title">清空所有数据</text>
+      <text class="dz-sub">删除全部车辆、加油与保养记录，无法恢复</text>
+    </view>
+    <view class="dz-btn" bindtap="onClearAll">清空</view>
+  </view>
+
+  <!-- ============ 其他 ============ -->
+  <view class="section-title">关于</view>
+
+  <view class="menu-group">
+    <view class="menu-item" bindtap="onAbout">
+      <text class="mi-text">关于车迹</text>
+      <text class="mi-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="onFeedback">
+      <text class="mi-text">意见反馈</text>
+      <text class="mi-arrow">›</text>
+    </view>
+    <view class="menu-item">
+      <text class="mi-text">版本</text>
+      <text class="mi-extra">{{version}}</text>
+    </view>
+  </view>
+
+  <view class="privacy-note">
+    <text class="pn-title">隐私说明</text>
+    <text class="pn-text">本小程序不收集任何个人信息，不进行网络请求。所有加油与保养记录仅保存在你的手机本地存储中。卸载小程序或清理数据后，记录将永久丢失，建议定期使用「导出数据」备份。</text>
+  </view>
+
+  <view class="bottom-space"></view>
+
+</view>

@@ -1,0 +1,389 @@
+.maintain-page {
+  padding: 24rpx 32rpx 60rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+  background:
+    radial-gradient(ellipse 120% 40% at 50% 0%, rgba(191, 90, 242, 0.06) 0%, transparent 70%),
+    var(--bg);
+}
+
+/* ============ 健康总览卡 ============ */
+
+.health-card {
+  padding: 32rpx;
+  border-radius: var(--r-lg);
+  border: 1rpx solid var(--line);
+  background: var(--bg-card);
+  position: relative;
+  overflow: hidden;
+}
+
+.health-card.danger {
+  background: linear-gradient(135deg, rgba(255, 59, 92, 0.13), var(--bg-card) 65%);
+  border-color: rgba(255, 59, 92, 0.26);
+}
+
+.health-card.warn {
+  background: linear-gradient(135deg, rgba(255, 159, 10, 0.11), var(--bg-card) 65%);
+  border-color: rgba(255, 159, 10, 0.24);
+}
+
+.health-card.good {
+  background: linear-gradient(135deg, rgba(50, 215, 75, 0.1), var(--bg-card) 65%);
+  border-color: rgba(50, 215, 75, 0.22);
+}
+
+.hc-left {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.hc-icon {
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34rpx;
+  flex-shrink: 0;
+}
+
+.hc-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.hc-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--t1);
+}
+
+.hc-sub {
+  font-size: 21rpx;
+  color: var(--t3);
+}
+
+/* ============ Tab ============ */
+
+.tab-row {
+  display: flex;
+  gap: 8rpx;
+  margin: 28rpx 0 24rpx;
+  padding: 6rpx;
+  border-radius: var(--r-md);
+  background: var(--bg-1);
+  border: 1rpx solid var(--line);
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 18rpx 0;
+  border-radius: var(--r-sm);
+  font-size: 26rpx;
+  color: var(--t3);
+  transition: all 0.2s;
+}
+
+.tab-item.active {
+  background: var(--bg-3);
+  color: var(--t1);
+  font-weight: 600;
+}
+
+/* ============ 看板列表 ============ */
+
+.board-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.board-item {
+  padding: 28rpx;
+  border-radius: var(--r-md);
+  background: var(--bg-card);
+  border: 1rpx solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+  transition: all 0.18s;
+}
+
+.board-item:active {
+  transform: scale(0.988);
+}
+
+.board-item.overdue {
+  background: linear-gradient(110deg, rgba(255, 59, 92, 0.09), var(--bg-card) 55%);
+  border-color: rgba(255, 59, 92, 0.22);
+}
+
+.board-item.soon {
+  background: linear-gradient(110deg, rgba(255, 159, 10, 0.08), var(--bg-card) 55%);
+  border-color: rgba(255, 159, 10, 0.2);
+}
+
+.bi-head {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.bi-icon {
+  width: 68rpx;
+  height: 68rpx;
+  border-radius: var(--r-sm);
+  background: rgba(255, 255, 255, 0.055);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  flex-shrink: 0;
+}
+
+.bi-title-area {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.bi-name {
+  font-size: 29rpx;
+  font-weight: 600;
+  color: var(--t1);
+}
+
+.bi-desc {
+  font-size: 20rpx;
+  color: var(--t4);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 进度条 */
+.bi-bar {
+  height: 8rpx;
+  border-radius: 4rpx;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+
+.bi-bar-fill {
+  height: 100%;
+  border-radius: 4rpx;
+  transition: width 0.5s ease-out;
+}
+
+.bg-red {
+  background: linear-gradient(90deg, #FF3B5C, #FF7A93);
+  box-shadow: 0 0 14rpx rgba(255, 59, 92, 0.55);
+}
+
+.bg-amber {
+  background: linear-gradient(90deg, #FF9F0A, #FFC44D);
+  box-shadow: 0 0 14rpx rgba(255, 159, 10, 0.5);
+}
+
+.bg-green {
+  background: linear-gradient(90deg, #32D74B, #6EE787);
+  box-shadow: 0 0 14rpx rgba(50, 215, 75, 0.4);
+}
+
+.bg-grey {
+  background: rgba(107, 119, 135, 0.5);
+}
+
+/* 数据网格 */
+.bi-grid {
+  display: flex;
+  gap: 8rpx;
+}
+
+.big-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+  padding: 14rpx 16rpx;
+  border-radius: var(--r-sm);
+  background: rgba(255, 255, 255, 0.032);
+}
+
+.bc-label {
+  font-size: 19rpx;
+  color: var(--t4);
+}
+
+.bc-val {
+  font-family: "SF Mono", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 27rpx;
+  font-weight: 700;
+  color: var(--t1);
+  letter-spacing: -0.4rpx;
+}
+
+.bc-val.muted {
+  color: var(--t3);
+  font-weight: 500;
+}
+
+/* 底部 */
+.bi-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14rpx;
+  border-top: 1rpx solid var(--line);
+}
+
+.bf-text {
+  font-size: 20rpx;
+  color: var(--t4);
+}
+
+.bf-action {
+  font-size: 21rpx;
+  color: var(--cyan);
+  font-weight: 500;
+}
+
+/* 说明 */
+.board-note {
+  display: flex;
+  gap: 12rpx;
+  margin-top: 24rpx;
+  padding: 22rpx 24rpx;
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.025);
+  border: 1rpx solid var(--line);
+}
+
+.bn-icon {
+  font-size: 24rpx;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.bn-text {
+  flex: 1;
+  font-size: 21rpx;
+  color: var(--t4);
+  line-height: 1.7;
+}
+
+/* ============ 历史列表 ============ */
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+}
+
+.history-item {
+  display: flex;
+  gap: 18rpx;
+  padding: 26rpx;
+  border-radius: var(--r-md);
+  background: var(--bg-card);
+  border: 1rpx solid var(--line);
+}
+
+.history-item:active {
+  background: var(--bg-2);
+}
+
+.hi-icon {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: var(--r-sm);
+  background: rgba(191, 90, 242, 0.11);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+
+.hi-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.hi-row-1 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+
+.hi-name {
+  font-size: 27rpx;
+  font-weight: 600;
+  color: var(--t1);
+}
+
+.hi-cost {
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 26rpx;
+  font-weight: 700;
+  color: var(--t2);
+  flex-shrink: 0;
+}
+
+.hi-row-2 {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  flex-wrap: wrap;
+}
+
+.hi-date,
+.hi-mileage {
+  font-size: 21rpx;
+  color: var(--t3);
+  font-family: "SF Mono", Consolas, monospace;
+}
+
+.hi-dot {
+  font-size: 18rpx;
+  color: var(--t4);
+}
+
+.hi-shop {
+  font-size: 20rpx;
+  color: var(--t3);
+}
+
+.hi-note {
+  font-size: 20rpx;
+  color: var(--t4);
+  font-style: italic;
+}
+
+.history-tip {
+  text-align: center;
+  padding: 28rpx 0;
+}
+
+.ht-text {
+  font-size: 20rpx;
+  color: var(--t4);
+}
+
+.bottom-space {
+  height: 180rpx;
+}

@@ -1,0 +1,181 @@
+<view class="page garage-page">
+
+  <!-- ============ 车辆卡片列表 ============ -->
+  <view class="car-list">
+    <view
+      class="car-card {{item.isActive ? 'active' : ''}}"
+      wx:for="{{cars}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onSwitch"
+    >
+      <!-- 顶部颜色条 -->
+      <view class="cc-bar" style="background: {{item.color}}; box-shadow: 0 0 20rpx {{item.color}};"></view>
+
+      <view class="cc-head">
+        <view class="cc-title">
+          <text class="cc-brand">{{item.brand}}</text>
+          <text class="cc-model">{{item.model}}</text>
+          <text class="cc-year">{{item.year}}</text>
+        </view>
+        <view wx:if="{{item.isActive}}" class="active-badge">当前</view>
+      </view>
+
+      <view class="cc-plate-row">
+        <text class="cc-plate">{{item.plate || '未填车牌'}}</text>
+        <text class="cc-fuel">{{item.fuelType}}</text>
+      </view>
+
+      <view class="cc-stats">
+        <view class="ccs-item">
+          <text class="ccs-val">{{item.odometer}}</text>
+          <text class="ccs-label">总里程 km</text>
+        </view>
+        <view class="ccs-div"></view>
+        <view class="ccs-item">
+          <text class="ccs-val c-cyan">{{item.consumptionText}}</text>
+          <text class="ccs-label">最近油耗</text>
+        </view>
+        <view class="ccs-div"></view>
+        <view class="ccs-item">
+          <text class="ccs-val">{{item.recordCount}}</text>
+          <text class="ccs-label">加油记录</text>
+        </view>
+      </view>
+
+      <view class="cc-edit" data-id="{{item.id}}" catchtap="onEdit">编辑</view>
+    </view>
+  </view>
+
+  <!-- ============ 添加车辆 ============ -->
+  <view class="add-car-btn" bindtap="onAdd">
+    <text class="acb-plus">+</text>
+    <text class="acb-text">添加车辆</text>
+  </view>
+
+  <view class="garage-note">
+    <text class="gn-text">多台车的数据相互独立，油耗与保养各自计算。切换当前车辆后，首页与统计会同步切换。</text>
+  </view>
+
+  <!-- ============ 编辑弹层 ============ -->
+  <view wx:if="{{editing}}" class="sheet-mask" bindtap="onCloseEdit">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-handle"></view>
+      <view class="sheet-title">{{editMode === 'create' ? '添加车辆' : '编辑车辆'}}</view>
+
+      <scroll-view scroll-y class="sheet-scroll">
+        <view class="form-group">
+          <text class="fg-label">品牌</text>
+          <input
+            class="fg-input"
+            value="{{form.brand}}"
+            placeholder="如 大众、比亚迪"
+            placeholder-class="fg-placeholder"
+            data-field="brand"
+            bindinput="onFormInput"
+          />
+        </view>
+
+        <view class="form-group">
+          <text class="fg-label">车型</text>
+          <input
+            class="fg-input"
+            value="{{form.model}}"
+            placeholder="如 速腾、宋 PLUS"
+            placeholder-class="fg-placeholder"
+            data-field="model"
+            bindinput="onFormInput"
+          />
+        </view>
+
+        <view class="form-row">
+          <view class="form-group half">
+            <text class="fg-label">年份</text>
+            <input
+              class="fg-input"
+              type="number"
+              value="{{form.year}}"
+              placeholder="2021"
+              placeholder-class="fg-placeholder"
+              data-field="year"
+              bindinput="onFormInput"
+            />
+          </view>
+          <view class="form-group half">
+            <text class="fg-label">油箱容量(L)</text>
+            <input
+              class="fg-input"
+              type="digit"
+              value="{{form.tankCapacity}}"
+              placeholder="50"
+              placeholder-class="fg-placeholder"
+              data-field="tankCapacity"
+              bindinput="onFormInput"
+            />
+          </view>
+        </view>
+
+        <view class="form-group">
+          <text class="fg-label">车牌号</text>
+          <input
+            class="fg-input"
+            value="{{form.plate}}"
+            placeholder="选填，如 鲁A·88888"
+            placeholder-class="fg-placeholder"
+            data-field="plate"
+            bindinput="onFormInput"
+          />
+        </view>
+
+        <view class="form-group">
+          <text class="fg-label">油品</text>
+          <picker range="{{fuelTypes}}" bindchange="onFuelTypeChange">
+            <view class="fg-picker">
+              <text>{{form.fuelType}}</text>
+              <text class="fg-arrow">›</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="form-group">
+          <text class="fg-label">当前里程(km)</text>
+          <input
+            class="fg-input"
+            type="digit"
+            value="{{form.odometer}}"
+            placeholder="0"
+            placeholder-class="fg-placeholder"
+            data-field="odometer"
+            bindinput="onFormInput"
+          />
+        </view>
+
+        <view class="form-group">
+          <text class="fg-label">主题色</text>
+          <view class="color-row">
+            <view
+              class="color-dot {{form.color === item ? 'selected' : ''}}"
+              wx:for="{{colorOptions}}"
+              wx:key="*this"
+              style="background: {{item}};"
+              data-color="{{item}}"
+              bindtap="onColorTap"
+            ></view>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view class="sheet-actions">
+        <button
+          wx:if="{{editMode === 'edit'}}"
+          class="btn btn-ghost small-btn"
+          bindtap="onDelete"
+        >删除</button>
+        <button class="btn btn-primary flex-1" bindtap="onSave">
+          {{editMode === 'create' ? '添加' : '保存'}}
+        </button>
+      </view>
+    </view>
+  </view>
+
+</view>

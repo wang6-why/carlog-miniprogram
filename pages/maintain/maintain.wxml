@@ -1,0 +1,137 @@
+<view class="page maintain-page">
+
+  <!-- ============ 状态总览 ============ -->
+  <view class="health-card {{counts.overdue > 0 ? 'danger' : (counts.soon > 0 ? 'warn' : 'good')}}">
+    <view class="hc-left">
+      <view class="hc-icon">
+        {{counts.overdue > 0 ? '⚠️' : (counts.soon > 0 ? '⏰' : '✓')}}
+      </view>
+      <view class="hc-body">
+        <text class="hc-title">
+          {{counts.overdue > 0 ? counts.overdue + ' 项已超期' : (counts.soon > 0 ? counts.soon + ' 项即将到期' : '保养状态良好')}}
+        </text>
+        <text class="hc-sub">
+          超期 {{counts.overdue}} · 即将 {{counts.soon}} · 正常 {{counts.normal}} · 无记录 {{counts.unknown}}
+        </text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ============ Tab ============ -->
+  <view class="tab-row">
+    <view class="tab-item {{tab === 'board' ? 'active' : ''}}" data-tab="board" bindtap="onTabTap">
+      保养看板
+    </view>
+    <view class="tab-item {{tab === 'history' ? 'active' : ''}}" data-tab="history" bindtap="onTabTap">
+      保养历史
+    </view>
+  </view>
+
+  <!-- ============ 看板 ============ -->
+  <block wx:if="{{tab === 'board'}}">
+    <view class="board-list">
+      <view
+        class="board-item {{item.status}}"
+        wx:for="{{items}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onItemTap"
+      >
+        <!-- 头部：图标 + 名称 + 状态 -->
+        <view class="bi-head">
+          <view class="bi-icon">{{item.icon}}</view>
+          <view class="bi-title-area">
+            <text class="bi-name">{{item.name}}</text>
+            <text class="bi-desc">{{item.desc}}</text>
+          </view>
+          <view class="badge {{item.status === 'overdue' ? 'badge-red' : (item.status === 'soon' ? 'badge-amber' : (item.status === 'unknown' ? 'badge-cyan' : 'badge-green'))}}">
+            {{item.statusText}}
+          </view>
+        </view>
+
+        <!-- 进度条 -->
+        <view class="bi-bar">
+          <view class="bi-bar-fill {{item.barClass}}" style="width: {{item.barWidth}}%"></view>
+        </view>
+
+        <!-- 数据网格 -->
+        <view class="bi-grid">
+          <view class="big-cell">
+            <text class="bc-label">剩余里程</text>
+            <text class="bc-val {{item.kmWarn ? 'c-red' : ''}}">{{item.kmText}}</text>
+          </view>
+          <view class="big-cell">
+            <text class="bc-label">剩余时间</text>
+            <text class="bc-val {{item.dayWarn ? 'c-red' : ''}}">{{item.dayText}}</text>
+          </view>
+          <view class="big-cell">
+            <text class="bc-label">下次里程</text>
+            <text class="bc-val muted">{{item.nextMileageText}}km</text>
+          </view>
+        </view>
+
+        <!-- 上次记录 -->
+        <view class="bi-foot">
+          <text class="bf-text">
+            上次 {{item.lastDateText}}{{item.lastMileage ? ' · ' + item.lastMileage + 'km' : ''}}
+          </text>
+          <text class="bf-action">记录 ›</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="board-note">
+      <text class="bn-icon">ℹ️</text>
+      <text class="bn-text">提醒规则为「里程或时间，先到者触发」。机油即使不开也会随时间氧化，所以时间维度不可省。</text>
+    </view>
+  </block>
+
+  <!-- ============ 历史 ============ -->
+  <block wx:else>
+    <view wx:if="{{logs.length > 0}}" class="history-list">
+      <view
+        class="history-item"
+        wx:for="{{logs}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onLogTap"
+        bindlongpress="onLogLongPress"
+      >
+        <view class="hi-icon">{{item.icon}}</view>
+        <view class="hi-body">
+          <view class="hi-row-1">
+            <text class="hi-name">{{item.name}}</text>
+            <text wx:if="{{item.costText}}" class="hi-cost">¥{{item.costText}}</text>
+          </view>
+          <view class="hi-row-2">
+            <text class="hi-date">{{item.dateText}}</text>
+            <text class="hi-dot">·</text>
+            <text class="hi-mileage">{{item.mileageText}}km</text>
+            <block wx:if="{{item.shop}}">
+              <text class="hi-dot">·</text>
+              <text class="hi-shop">{{item.shop}}</text>
+            </block>
+          </view>
+          <text wx:if="{{item.note}}" class="hi-note">{{item.note}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:elif="{{loaded}}" class="empty">
+      <view class="empty-icon">🔧</view>
+      <text class="empty-text">还没有保养记录</text>
+    </view>
+
+    <view class="history-tip">
+      <text class="ht-text">长按记录可删除</text>
+    </view>
+  </block>
+
+  <view class="bottom-space"></view>
+
+  <!-- 悬浮按钮 -->
+  <view class="fab" bindtap="onAdd">
+    <view class="fab-plus"></view>
+  </view>
+
+</view>

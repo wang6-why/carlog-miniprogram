@@ -1,0 +1,321 @@
+.stats-page {
+  padding: 24rpx 32rpx 60rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+  background:
+    radial-gradient(ellipse 120% 40% at 50% 0%, rgba(0, 212, 255, 0.06) 0%, transparent 70%),
+    var(--bg);
+}
+
+/* ============ 顶部车辆信息 ============ */
+
+.head-info {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin-bottom: 28rpx;
+}
+
+.hi-dot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.hi-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--t1);
+}
+
+.hi-sub {
+  font-size: 22rpx;
+  color: var(--t3);
+  font-family: "SF Mono", Consolas, monospace;
+  margin-left: auto;
+}
+
+/* ============ 核心 KPI ============ */
+
+.hero-kpi {
+  padding: 40rpx 32rpx 28rpx;
+  border-radius: var(--r-xl);
+  background: linear-gradient(160deg, rgba(0, 212, 255, 0.11) 0%, var(--bg-card) 62%);
+  border: 1rpx solid rgba(0, 212, 255, 0.18);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 右上角装饰性光晕 */
+.hero-kpi::after {
+  content: '';
+  position: absolute;
+  top: -80rpx;
+  right: -60rpx;
+  width: 240rpx;
+  height: 240rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.18), transparent 68%);
+}
+
+.hk-label {
+  font-size: 22rpx;
+  color: var(--t3);
+  letter-spacing: 2rpx;
+  text-transform: uppercase;
+}
+
+.hk-value {
+  display: flex;
+  align-items: baseline;
+  gap: 10rpx;
+  margin: 12rpx 0 28rpx;
+}
+
+.hk-num {
+  font-size: 104rpx;
+  color: var(--cyan);
+  text-shadow: 0 0 40rpx rgba(0, 212, 255, 0.45);
+}
+
+.hk-unit {
+  font-size: 24rpx;
+  color: var(--t3);
+}
+
+.hk-split {
+  display: flex;
+  align-items: center;
+  padding-top: 24rpx;
+  border-top: 1rpx solid var(--line);
+  position: relative;
+  z-index: 1;
+}
+
+.hks-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.hks-label {
+  font-size: 20rpx;
+  color: var(--t4);
+}
+
+.hks-val {
+  font-family: "SF Mono", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--t1);
+}
+
+.hks-div {
+  width: 1rpx;
+  height: 36rpx;
+  background: var(--line);
+}
+
+/* ============ 图表卡片 ============ */
+
+.chart-card {
+  padding: 28rpx 24rpx 20rpx;
+  border-radius: var(--r-lg);
+  background: var(--bg-card);
+  border: 1rpx solid var(--line);
+}
+
+.chart-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 8rpx 16rpx;
+}
+
+.ch-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--t1);
+}
+
+.ch-hint {
+  font-size: 20rpx;
+  color: var(--t4);
+}
+
+.chart-canvas {
+  width: 100%;
+}
+
+.line-canvas {
+  height: 380rpx;
+}
+
+.bar-canvas {
+  height: 340rpx;
+}
+
+.chart-foot {
+  display: block;
+  font-size: 20rpx;
+  color: var(--t4);
+  line-height: 1.6;
+  padding: 16rpx 8rpx 4rpx;
+}
+
+/* ============ 图表空态 ============ */
+
+.chart-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  padding: 64rpx 40rpx;
+  border-radius: var(--r-lg);
+  background: var(--bg-card);
+  border: 1rpx dashed var(--line-strong);
+}
+
+.chart-empty.small {
+  padding: 44rpx 40rpx;
+}
+
+.ce-icon {
+  font-size: 48rpx;
+  opacity: 0.5;
+}
+
+.ce-title {
+  font-size: 25rpx;
+  color: var(--t2);
+  font-weight: 500;
+}
+
+.ce-sub {
+  font-size: 21rpx;
+  color: var(--t4);
+  text-align: center;
+  line-height: 1.7;
+}
+
+/* ============ 花费构成 ============ */
+
+.cost-card {
+  padding: 8rpx 28rpx;
+  border-radius: var(--r-lg);
+  background: var(--bg-card);
+  border: 1rpx solid var(--line);
+}
+
+.cost-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26rpx 0;
+}
+
+.cr-left {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+
+.cr-dot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 3rpx;
+}
+
+.cr-label {
+  font-size: 26rpx;
+  color: var(--t2);
+}
+
+.cr-val {
+  font-family: "SF Mono", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--t1);
+}
+
+.cost-row.total {
+  padding: 28rpx 0;
+}
+
+.total-label {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--t1);
+}
+
+.total-val {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--cyan);
+}
+
+/* ============ 里程网格 ============ */
+
+.km-grid {
+  display: flex;
+  gap: 16rpx;
+}
+
+.km-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  padding: 32rpx 24rpx;
+  border-radius: var(--r-md);
+  background: var(--bg-card);
+  border: 1rpx solid var(--line);
+}
+
+.kc-val {
+  font-family: "SF Mono", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--t1);
+  letter-spacing: -1rpx;
+}
+
+.kc-label {
+  font-size: 20rpx;
+  color: var(--t3);
+}
+
+/* ============ 说明 ============ */
+
+.stats-note {
+  margin-top: 36rpx;
+  padding: 26rpx;
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.025);
+  border: 1rpx solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.sn-title {
+  font-size: 22rpx;
+  color: var(--t2);
+  font-weight: 600;
+}
+
+.sn-text {
+  font-size: 21rpx;
+  color: var(--t4);
+  line-height: 1.72;
+}
+
+.bottom-space {
+  height: 80rpx;
+}

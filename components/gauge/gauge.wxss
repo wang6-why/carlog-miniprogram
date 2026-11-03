@@ -1,0 +1,66 @@
+.gauge-wrap {
+  position: relative;
+  width: 100%;
+  height: 420rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gauge-canvas {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* 中心读数区，压在 canvas 上方 */
+.gauge-center {
+  position: absolute;
+  left: 50%;
+  bottom: 48rpx;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6rpx;
+  pointer-events: none;
+}
+
+.gauge-title {
+  font-size: 22rpx;
+  color: #6b7787;
+  letter-spacing: 2rpx;
+  text-transform: uppercase;
+}
+
+.gauge-value {
+  display: flex;
+  align-items: baseline;
+  gap: 4rpx;
+}
+
+.gauge-num {
+  font-family: "SF Mono", "DIN Alternate", "Roboto Mono", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 84rpx;
+  font-weight: 700;
+  color: #f2f6fa;
+  line-height: 1;
+  letter-spacing: -2rpx;
+  /* 数字发光，模拟仪表背光 */
+  text-shadow: 0 0 28rpx rgba(0, 212, 255, 0.5);
+}
+
+.gauge-unit {
+  font-size: 22rpx;
+  color: #6b7787;
+  font-weight: 500;
+}
+
+.gauge-subtitle {
+  font-size: 22rpx;
+  color: #47525f;
+  letter-spacing: 1rpx;
+}

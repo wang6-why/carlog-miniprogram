@@ -1,0 +1,135 @@
+.settings-page {
+  padding: 24rpx 32rpx 60rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* ============ 菜单组 ============ */
+
+.menu-group {
+  background: var(--bg-card);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 28rpx;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item:active {
+  background: rgba(255, 255, 255, 0.032);
+}
+
+.mi-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  min-width: 0;
+}
+
+.mi-text {
+  font-size: 28rpx;
+  color: var(--t1);
+}
+
+.mi-sub {
+  font-size: 20rpx;
+  color: var(--t4);
+  line-height: 1.5;
+}
+
+.mi-extra {
+  font-size: 22rpx;
+  color: var(--t4);
+  font-family: "SF Mono", Consolas, monospace;
+}
+
+.mi-arrow {
+  font-size: 32rpx;
+  color: var(--t4);
+}
+
+/* ============ 危险区 ============ */
+
+.danger-zone {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 28rpx;
+  border-radius: var(--r-md);
+  background: var(--red-soft);
+  border: 1rpx solid rgba(255, 59, 92, 0.22);
+}
+
+.dz-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.dz-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--red);
+}
+
+.dz-sub {
+  font-size: 20rpx;
+  color: var(--t3);
+  line-height: 1.5;
+}
+
+.dz-btn {
+  padding: 16rpx 36rpx;
+  border-radius: var(--r-sm);
+  background: rgba(255, 59, 92, 0.2);
+  border: 1rpx solid rgba(255, 59, 92, 0.4);
+  color: var(--red);
+  font-size: 26rpx;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.dz-btn:active {
+  background: rgba(255, 59, 92, 0.32);
+}
+
+/* ============ 隐私说明 ============ */
+
+.privacy-note {
+  margin-top: 36rpx;
+  padding: 26rpx;
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.022);
+  border: 1rpx solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.pn-title {
+  font-size: 22rpx;
+  color: var(--t2);
+  font-weight: 600;
+}
+
+.pn-text {
+  font-size: 21rpx;
+  color: var(--t4);
+  line-height: 1.75;
+}
+
+.bottom-space {
+  height: 80rpx;
+}

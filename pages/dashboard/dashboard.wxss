@@ -1,0 +1,618 @@
+.dashboard {
+  padding-bottom: 0;
+  /* 顶部径向渐变，模拟仪表台的环境光 */
+  background:
+    radial-gradient(ellipse 120% 60% at 50% 0%, rgba(0, 212, 255, 0.09) 0%, transparent 68%),
+    var(--bg);
+  min-height: 100vh;
+}
+
+/* ============ 顶部导航 ============ */
+
+.nav {
+  position: relative;
+  z-index: 10;
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 32rpx 8rpx;
+}
+
+.car-chip {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  padding: 10rpx 20rpx 10rpx 14rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1rpx solid var(--line);
+}
+
+.car-chip:active {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.car-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.car-name {
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
+}
+
+.car-brand {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--t1);
+}
+
+.car-model {
+  font-size: 24rpx;
+  color: var(--t3);
+}
+
+.car-caret {
+  font-size: 20rpx;
+  color: var(--cyan);
+  margin-left: 4rpx;
+}
+
+.plate {
+  font-size: 22rpx;
+  color: var(--t3);
+  padding: 8rpx 18rpx;
+  border-radius: 8rpx;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1rpx solid var(--line);
+  font-family: "SF Mono", Consolas, monospace;
+  letter-spacing: 1rpx;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+/* ============ 里程条 ============ */
+
+.odo-strip {
+  display: flex;
+  align-items: center;
+  margin: 20rpx 32rpx 8rpx;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.odo-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.odo-label {
+  font-size: 20rpx;
+  color: var(--t3);
+  letter-spacing: 1rpx;
+}
+
+.odo-val {
+  display: flex;
+  align-items: baseline;
+}
+
+.odo-sep {
+  width: 1rpx;
+  height: 44rpx;
+  background: var(--line);
+}
+
+/* ============ 仪表卡片 ============ */
+
+.gauge-card {
+  margin: 12rpx 32rpx 0;
+  padding: 8rpx 24rpx 0;
+  background: linear-gradient(180deg, rgba(23, 30, 42, 0.9) 0%, rgba(19, 25, 34, 0.6) 100%);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 卡片顶部一条发光细线，像仪表台氛围灯 */
+.gauge-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 2rpx;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0.55;
+}
+
+.trend-line {
+  text-align: center;
+  font-size: 24rpx;
+  font-weight: 600;
+  margin: -8rpx 0 16rpx;
+  letter-spacing: 0.5rpx;
+}
+
+.gauge-footer {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 0 32rpx;
+  margin-top: 8rpx;
+  border-top: 1rpx solid var(--line);
+}
+
+.gf-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.gf-val {
+  font-family: "SF Mono", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--t1);
+  letter-spacing: -0.5rpx;
+}
+
+.gf-label {
+  font-size: 21rpx;
+  color: var(--t3);
+}
+
+.gf-divider {
+  width: 1rpx;
+  height: 40rpx;
+  background: var(--line);
+}
+
+/* ============ 保养提醒 ============ */
+
+.alert-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.alert-card {
+  display: flex;
+  gap: 20rpx;
+  padding: 26rpx;
+  border-radius: var(--r-md);
+  background: var(--bg-card);
+  border: 1rpx solid var(--line);
+  position: relative;
+  overflow: hidden;
+}
+
+.alert-card.overdue {
+  background: linear-gradient(90deg, rgba(255, 59, 92, 0.1) 0%, var(--bg-card) 60%);
+  border-color: rgba(255, 59, 92, 0.24);
+}
+
+.alert-card.soon {
+  background: linear-gradient(90deg, rgba(255, 159, 10, 0.09) 0%, var(--bg-card) 60%);
+  border-color: rgba(255, 159, 10, 0.22);
+}
+
+.alert-card:active {
+  opacity: 0.82;
+}
+
+.alert-icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: var(--r-sm);
+  background: rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34rpx;
+  flex-shrink: 0;
+}
+
+.alert-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+}
+
+.alert-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+
+.alert-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--t1);
+}
+
+.alert-bar {
+  height: 6rpx;
+  border-radius: 3rpx;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.alert-bar-fill {
+  height: 100%;
+  border-radius: 3rpx;
+  transition: width 0.5s ease-out;
+}
+
+.bar-red {
+  background: linear-gradient(90deg, #FF3B5C, #FF7A93);
+  box-shadow: 0 0 12rpx rgba(255, 59, 92, 0.6);
+}
+
+.bar-amber {
+  background: linear-gradient(90deg, #FF9F0A, #FFC44D);
+  box-shadow: 0 0 12rpx rgba(255, 159, 10, 0.5);
+}
+
+.alert-hint {
+  font-size: 22rpx;
+  color: var(--t3);
+}
+
+/* 全部正常 */
+.all-good {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 30rpx 28rpx;
+  border-radius: var(--r-md);
+  background: var(--green-soft);
+  border: 1rpx solid rgba(50, 215, 75, 0.2);
+}
+
+.all-good:active {
+  opacity: 0.85;
+}
+
+.ag-icon {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: rgba(50, 215, 75, 0.18);
+  color: var(--green);
+  font-size: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ag-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.ag-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--green);
+}
+
+.ag-sub {
+  font-size: 22rpx;
+  color: var(--t3);
+}
+
+.ag-arrow {
+  font-size: 36rpx;
+  color: var(--t4);
+}
+
+/* ============ 快捷操作 ============ */
+
+.quick-row {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 32rpx;
+}
+
+.quick-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14rpx;
+  padding: 28rpx 12rpx;
+  border-radius: var(--r-md);
+  background: var(--bg-card);
+  border: 1rpx solid var(--line);
+}
+
+.quick-btn:active {
+  background: var(--bg-2);
+  transform: scale(0.97);
+}
+
+.qb-icon {
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34rpx;
+}
+
+.qb-icon.fuel {
+  background: var(--cyan-soft);
+}
+
+.qb-icon.maint {
+  background: var(--purple-soft);
+}
+
+.qb-icon.garage {
+  background: var(--amber-soft);
+}
+
+.qb-text {
+  font-size: 23rpx;
+  color: var(--t2);
+}
+
+/* ============ 最近记录 ============ */
+
+.more-link {
+  font-size: 23rpx;
+  color: var(--cyan);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.recent-list {
+  background: var(--bg-card);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+
+.recent-item {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 26rpx 28rpx;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.recent-item:last-child {
+  border-bottom: none;
+}
+
+.recent-item:active {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.ri-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+  min-width: 130rpx;
+}
+
+.ri-date {
+  font-size: 26rpx;
+  color: var(--t1);
+  font-weight: 500;
+  font-family: "SF Mono", Consolas, monospace;
+}
+
+.ri-station {
+  font-size: 20rpx;
+  color: var(--t4);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 150rpx;
+}
+
+.ri-mid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+  min-width: 0;
+}
+
+.ri-mileage {
+  font-size: 24rpx;
+  color: var(--t2);
+  font-family: "SF Mono", Consolas, monospace;
+}
+
+.ri-consumption {
+  font-size: 21rpx;
+  color: var(--cyan);
+  font-family: "SF Mono", Consolas, monospace;
+}
+
+.ri-consumption.muted {
+  color: var(--t4);
+}
+
+.ri-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6rpx;
+}
+
+.ri-amount {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--t1);
+  font-family: "SF Mono", Consolas, monospace;
+}
+
+.ri-liters {
+  font-size: 20rpx;
+  color: var(--t4);
+}
+
+/* ============ 小知识 ============ */
+
+.tip-card {
+  margin-top: 32rpx;
+  padding: 24rpx 26rpx;
+  border-radius: var(--r-md);
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.07), rgba(191, 90, 242, 0.05));
+  border: 1rpx solid rgba(0, 212, 255, 0.14);
+  display: flex;
+  gap: 16rpx;
+  align-items: flex-start;
+}
+
+.tip-tag {
+  flex-shrink: 0;
+  font-size: 19rpx;
+  color: var(--cyan);
+  background: rgba(0, 212, 255, 0.14);
+  padding: 4rpx 12rpx;
+  border-radius: 6rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+}
+
+.tip-text {
+  flex: 1;
+  font-size: 23rpx;
+  color: var(--t2);
+  line-height: 1.65;
+}
+
+.bottom-space {
+  height: 180rpx;
+}
+
+/* ============ 车辆切换弹层 ============ */
+
+.sheet-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.68);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.sheet {
+  width: 100%;
+  background: var(--bg-1);
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 20rpx 32rpx calc(40rpx + env(safe-area-inset-bottom));
+  animation: slideUp 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.sheet-handle {
+  width: 72rpx;
+  height: 6rpx;
+  border-radius: 3rpx;
+  background: rgba(255, 255, 255, 0.18);
+  margin: 0 auto 24rpx;
+}
+
+.sheet-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--t1);
+  margin-bottom: 24rpx;
+}
+
+.sheet-item {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  padding: 26rpx 24rpx;
+  border-radius: var(--r-md);
+  background: var(--bg-2);
+  margin-bottom: 14rpx;
+  border: 1rpx solid transparent;
+}
+
+.sheet-item.active {
+  background: var(--cyan-soft);
+  border-color: rgba(0, 212, 255, 0.3);
+}
+
+.sheet-item-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.sheet-item-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--t1);
+}
+
+.sheet-item-sub {
+  font-size: 21rpx;
+  color: var(--t3);
+  font-family: "SF Mono", Consolas, monospace;
+}
+
+.sheet-check {
+  font-size: 32rpx;
+  color: var(--cyan);
+  font-weight: 700;
+}
+
+.sheet-action {
+  margin-top: 16rpx;
+  padding: 28rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: var(--cyan);
+  font-weight: 600;
+  border-radius: var(--r-md);
+  background: rgba(0, 212, 255, 0.08);
+}
+
+.sheet-action:active {
+  background: rgba(0, 212, 255, 0.14);
+}

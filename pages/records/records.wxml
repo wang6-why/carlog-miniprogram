@@ -1,0 +1,113 @@
+<view class="page records-page">
+
+  <!-- ============ 汇总条 ============ -->
+  <view class="summary-bar">
+    <view class="sb-item">
+      <text class="sb-val reading reading-sm">{{summary.recordCount || 0}}</text>
+      <text class="sb-label">总记录</text>
+    </view>
+    <view class="sb-sep"></view>
+    <view class="sb-item">
+      <text class="sb-val reading reading-sm">{{totalLitersText}}</text>
+      <text class="sb-label">总油量(L)</text>
+    </view>
+    <view class="sb-sep"></view>
+    <view class="sb-item">
+      <text class="sb-val reading reading-sm">{{totalAmountText}}</text>
+      <text class="sb-label">总花费(元)</text>
+    </view>
+  </view>
+
+  <!-- ============ 筛选 ============ -->
+  <view class="filter-row">
+    <view
+      class="filter-chip {{filter === 'all' ? 'active' : ''}}"
+      data-filter="all"
+      bindtap="onFilterTap"
+    >全部</view>
+    <view
+      class="filter-chip {{filter === 'full' ? 'active' : ''}}"
+      data-filter="full"
+      bindtap="onFilterTap"
+    >已加满</view>
+    <view
+      class="filter-chip {{filter === 'partial' ? 'active' : ''}}"
+      data-filter="partial"
+      bindtap="onFilterTap"
+    >未加满</view>
+    <view class="filter-total">
+      <text class="ft-label">合计</text>
+      <text class="ft-val">¥{{filteredTotal}}</text>
+    </view>
+  </view>
+
+  <!-- ============ 列表 ============ -->
+  <view wx:if="{{list.length > 0}}" class="record-list">
+    <view
+      class="record-card fade-up"
+      wx:for="{{list}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onItemTap"
+      bindlongpress="onItemLongPress"
+    >
+      <!-- 左侧日期块 -->
+      <view class="rc-date-block">
+        <text class="rc-date">{{item.dateText}}</text>
+        <text class="rc-weekday">{{item.weekday}}</text>
+      </view>
+
+      <!-- 中间主信息 -->
+      <view class="rc-main">
+        <view class="rc-row-1">
+          <text class="rc-mileage">{{item.mileageText}}</text>
+          <text class="rc-km">km</text>
+          <view wx:if="{{item.isFull}}" class="tag-full">满</view>
+          <view wx:else class="tag-partial">非满</view>
+        </view>
+
+        <view class="rc-row-2">
+          <text class="rc-detail">{{item.litersText}}L</text>
+          <text class="rc-dot">·</text>
+          <text class="rc-detail">{{item.priceText}}元/L</text>
+          <text wx:if="{{item.station}}" class="rc-dot">·</text>
+          <text wx:if="{{item.station}}" class="rc-station">{{item.station}}</text>
+        </view>
+
+        <!-- 油耗徽标 -->
+        <view wx:if="{{item.hasConsumption}}" class="rc-consumption">
+          <text class="rcc-val">{{item.consumptionText}}</text>
+          <text class="rcc-unit">L/100km</text>
+          <text class="rcc-sep">|</text>
+          <text class="rcc-cost">{{item.costPerKmText}} 元/km</text>
+        </view>
+        <view wx:else class="rc-no-consumption">
+          <text class="rnc-text">未加满，将与下次满油合并计算</text>
+        </view>
+      </view>
+
+      <!-- 右侧金额 -->
+      <view class="rc-amount-block">
+        <text class="rc-amount">¥{{item.amountText}}</text>
+        <text class="rc-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ============ 空态 ============ -->
+  <view wx:elif="{{loaded}}" class="empty">
+    <view class="empty-icon">📋</view>
+    <text class="empty-text">
+      {{filter === 'all' ? '还没有加油记录' : (filter === 'full' ? '没有已加满的记录' : '没有未加满的记录')}}
+    </text>
+    <view wx:if="{{filter === 'all'}}" class="empty-btn" bindtap="onAdd">去记一笔</view>
+  </view>
+
+  <view class="list-bottom-space"></view>
+
+  <!-- 悬浮按钮 -->
+  <view class="fab" bindtap="onAdd">
+    <view class="fab-plus"></view>
+  </view>
+
+</view>

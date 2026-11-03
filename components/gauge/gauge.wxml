@@ -1,0 +1,17 @@
+<view class="gauge-wrap" bindtap="onTap">
+  <canvas
+    type="2d"
+    id="{{canvasId}}"
+    class="gauge-canvas"
+  ></canvas>
+
+  <!-- 中心读数（用 DOM 而非 canvas 绘制，方便用等宽字体和 CSS 动画） -->
+  <view class="gauge-center">
+    <view class="gauge-title">{{title}}</view>
+    <view class="gauge-value">
+      <text class="gauge-num">{{displayValue}}</text>
+      <text class="gauge-unit">L/100km</text>
+    </view>
+    <view wx:if="{{subtitle}}" class="gauge-subtitle">{{subtitle}}</view>
+  </view>
+</view>
