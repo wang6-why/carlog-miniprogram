@@ -3,9 +3,14 @@
 <p align="left">
   <img alt="validate" src="https://github.com/wang6-why/carlog-miniprogram/actions/workflows/validate.yml/badge.svg">
   <img alt="license" src="https://img.shields.io/badge/license-MIT-32D74B">
-  <img alt="pages" src="https://img.shields.io/badge/pages-8-00D4FF">
-  <img alt="tests" src="https://img.shields.io/badge/tests-84%20passed-32D74B">
+  <img alt="pages" src="https://img.shields.io/badge/pages-on-00D4FF">
+  <img alt="mp-tests" src="https://img.shields.io/badge/小程序测试-84%20passed-32D74B">
+  <img alt="be-tests" src="https://img.shields.io/badge/后端测试-29%20passed-32D74B">
   <img alt="platform" src="https://img.shields.io/badge/WeChat-原生小程序-07C160">
+  <img alt="spring" src="https://img.shields.io/badge/Spring%20Boot-3.3.5-6DB33F">
+  <img alt="vue" src="https://img.shields.io/badge/Vue-3-42B883">
+  <img alt="mysql" src="https://img.shields.io/badge/MySQL-8.0-4479A1">
+  <img alt="h2" src="https://img.shields.io/badge/H2-in--memory-589636">
 </p>
 
 一个给「自己养车的人」用的记账工具。加一次油记一笔，剩下的交给它：算真实油耗、算每公里成本、按「里程或时间先到」提醒保养。
@@ -13,6 +18,18 @@
 > 常见养车 App 的通病是功能堆到你看不懂。这个项目的取舍是——**只做三件事：记账、算油耗、提醒保养**，把这三件事做到算得准、看得懂。
 
 在线体验：[wang6-why.github.io/carlog-miniprogram](https://wang6-why.github.io/carlog-miniprogram/)（纯 HTML 交互原型，无需安装）
+
+## 项目构成（全栈三件套）
+
+一个仓库，三件可独立部署的产物，共享同一套「加满法油耗 + 双维度保养」算法：
+
+| 产物 | 技术栈 | 目录 | 默认地址 |
+|---|---|---|---|
+| 微信小程序（客户端） | 原生小程序 · WXML/WXSS/JS | 仓库根目录 | 微信开发者工具导入 |
+| Spring Boot 后端 | Spring Boot 3.3 + MyBatis-Plus + JJWT | `server/` | `http://localhost:8088/api` |
+| Vue 3 管理后台 | Vue 3 + Vite + Element Plus + Pinia | `admin/` | `http://localhost:5173` |
+
+小程序**默认走本地存储**（开箱即用、离线可演示）；「设置 → 后端连接」打开开关即切到真实后端，仪表盘数据从服务器拉取，油耗算法与后端同源，数字永远一致。后端与管理后台的详细运行方式见 [`server/README.md`](server/README.md)。
 
 ---
 
