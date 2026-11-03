@@ -15,3 +15,9 @@ Thumbs.db
 # 测试临时产物
 coverage/
 .cache/
+
+# 后端构建产物
+server/target/
+
+# 管理后台构建产物
+admin/dist/

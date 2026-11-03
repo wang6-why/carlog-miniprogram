@@ -1,10 +1,12 @@
 const app = getApp();
+const config = require('../../utils/config');
 const carService = require('../../services/car');
 const fuelLog = require('../../services/fuelLog');
 const maintenance = require('../../services/maintenance');
 const format = require('../../utils/format');
 const ui = require('../../utils/ui');
 const mock = require('../../mock/data');
+const dashboard = require('../../services/dashboard');
 
 Page({
   data: {
@@ -52,6 +54,14 @@ Page({
   /* ================= 数据装载 ================= */
 
   refresh() {
+    if (config.USE_REMOTE) {
+      this.loadRemoteDashboard();
+      return;
+    }
+    this.loadLocal();
+  },
+
+  loadLocal() {
     const cars = carService.getAll();
     const carId = app.getActiveCarId();
     const car = carService.getById(carId) || cars[0];
@@ -192,5 +202,18 @@ Page({
 
   onGoMaintain() {
     wx.navigateTo({ url: '/pages/maintain/maintain' });
+  },
+
+  /* ================= 远程数据源 ================= */
+
+  async loadRemoteDashboard() {
+    try {
+      const data = await dashboard.loadRemote();
+      this.setData(data);
+    } catch (e) {
+      // 远程失败不崩页：提示并回退本地，保证还能用
+      ui.toast((e && e.message) || '远程数据加载失败，已切回本地');
+      this.loadLocal();
+    }
   }
 });

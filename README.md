@@ -67,7 +67,7 @@
 
 ## 技术实现
 
-原生微信小程序（WXML / WXSS / JS / JSON），零第三方依赖，无 npm 构建。
+原生微信小程序（WXML / WXSS / JS / JSON），零第三方依赖，无 npm 构建。后端为 Spring Boot 3 + MyBatis-Plus，管理后台为 Vue 3 + Element Plus。
 
 ```
 carlog/
@@ -75,24 +75,24 @@ carlog/
 ├── assets/tabbar/                    深色 tabBar 图标（脚本生成 PNG）
 ├── components/
 │   └── gauge/                        油耗仪表盘（Canvas 2D）
-├── pages/                            8 个页面
-│   ├── dashboard/                    仪表盘
-│   ├── add/                          记一笔
-│   ├── records/                      记录
-│   ├── stats/                        分析
-│   ├── maintain/                     保养看板
-│   ├── garage/                       车库
-│   ├── mine/                         我的
-│   └── settings/                     设置
+├── pages/                            8 个页面（仪表盘/记一笔/记录/分析/保养/车库/我的/设置）
 ├── services/
-│   ├── fuel.js                       油耗引擎（核心）
+│   ├── fuel.js                       油耗引擎（核心，前后端同源算法）
 │   ├── maintenance.js                保养推算（核心）
-│   ├── fuelLog.js                    加油记录 CRUD + 校验
-│   └── car.js                        车辆 CRUD + 里程同步
-├── utils/                            storage / format / ui
-├── mock/data.js                      两辆车 + 15 条加油 + 8 条保养
-├── tests/                            84 项测试
-└── scripts/validate.js               静态校验
+│   ├── fuelLog.js / car.js           记录与车辆 CRUD + 校验
+│   ├── remote.js                     后端接口封装（USE_REMOTE 时启用）
+│   └── dashboard.js                  仪表盘数据源（远程/本地可切换）
+├── utils/                            storage / format / ui / request / config
+├── mock/data.js                      两辆车 + 15 条加油 + 8 条保养（离线演示用）
+├── tests/ / scripts/                 84 项测试 + 静态校验
+│
+├── server/                           Spring Boot 3 后端（端口 8088，context-path /api）
+│   ├── src/main/java/com/carlog/     5 个 controller / service / 算法 / 鉴权
+│   ├── src/main/resources/db/        建表脚本（H2 / MySQL 双兼容）
+│   └── Dockerfile
+├── admin/                            Vue 3 管理后台（Vite + Element Plus）
+│   └── src/                         登录 / 看板 / 车辆 / 加油 / 保养 五个模块
+└── docker-compose.yml                MySQL 8 + 后端一键起
 ```
 
 ### 设计系统
@@ -192,11 +192,54 @@ CI 在 GitHub Actions 上跑同一套（`.github/workflows/validate.yml`）。
 
 ---
 
+## 全栈版本（后端 + 管理后台）
+
+不想数据只躺在手机里？项目已配套一套可独立部署的后端与管理后台。**小程序默认仍走本地数据**（开箱即用、离线可演示），在「设置 → 后端连接」里打开开关、填好地址即可切到真实后端——仪表盘会从服务器拉数据，油耗沿用和后端**同一套加满法算法**，前后端数字永远一致。
+
+### 后端 `server/`（Spring Boot 3）
+
+```bash
+# 本地开发：H2 内存库，零外部依赖，启动即灌入演示数据
+cd server
+mvn -B package
+java -jar target/carlog-server.jar --server.port=8088
+# 接口示例
+curl -X POST localhost:8088/api/auth/login -H 'Content-Type: application/json' \
+     -d '{"username":"demo","password":"123456"}'
+# 演示账号：demo / 123456（管理员 admin / admin123）
+```
+
+- 技术栈：Spring Boot 3 + MyBatis-Plus + JJWT 鉴权，H2 / MySQL 双 profile
+- 4 张表：用户 / 车辆 / 加油记录 / 保养记录；油耗与保养算法从 JS 端**逐行迁移**到 Java，另有 29 项单测（含与 JS 算法结果对齐）+ MockMvc 接口测试
+- 生产用 MySQL：`docker compose up -d` 一键起（MySQL 8 + 后端，启动自动建表灌数据）
+
+### 管理后台 `admin/`（Vue 3）
+
+```bash
+cd admin
+npm install
+npm run dev      # 开发，/api 已代理到 localhost:8088
+npm run build    # 产物在 dist/，前后端同源部署即可
+```
+
+- 深色霓虹主题，与小程序视觉统一；登录、数据看板（含月度支出图）、车辆 / 加油 / 保养管理
+- API 封装统一拆出 `R.data`，401 自动跳登录；看板复用小程序同款油耗引擎的思路
+
+### 整体数据流
+
+```
+微信小程序 ──wx.request──┐
+Vue 管理后台 ─axios──────┼──> Spring Boot (/api) ──> MySQL / H2
+  统一加满法油耗算法（JS ⇄ Java 同源）
+```
+
+---
+
 ## 已知限制
 
-- 数据仅存本地，换设备不迁移（导出 JSON 是临时方案）
+- 小程序默认离线（本地存储）；开启「后端连接」后可连真实后端，但真机调试需填电脑局域网 IP 或公网地址
 - 仪表盘 / 图表需要基础库 ≥ 2.9（Canvas 2D），低版本会降级为只显示数字
-- 无云端同步、无订阅消息推送（保养提醒是打开小程序时算出来的，不是推送）
+- 无订阅消息推送（保养提醒是打开小程序时算出来的，不是推送）；如需推送需接入微信订阅消息
 - 保养周期取自通用模板，不同车型手册差异未做适配
 
 ## License

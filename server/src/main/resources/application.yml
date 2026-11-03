@@ -1,0 +1,58 @@
+server:
+  port: 8088
+  servlet:
+    context-path: /api
+  error:
+    # 不要暴露堆栈给前端，但要保留 trace 字段方便本地排查
+    include-message: never
+    include-stacktrace: never
+
+spring:
+  application:
+    name: carlog-server
+  profiles:
+    active: h2
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: non_null
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    # 关键：默认 MP 生成 "col AS property" 的别名，遇到 H2 保留字（如 year）会 syntax error。
+    # 改成纯 %s 只输出列名，结果列靠 map-underscore-to-camel-case 映射回属性。
+    column-format: "%s"
+    # 开发期看 SQL，上线关掉
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    banner: false
+    db-config:
+      id-type: assign_id
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+springdoc:
+  swagger-ui:
+    path: /doc.html
+  api-docs:
+    path: /v3/api-docs
+
+carlog:
+  jwt:
+    # 生产必须换成环境变量注入，这里只是本地演示值
+    secret: ${CARLOG_JWT_SECRET:carlog-local-dev-secret-key-change-me-in-prod-2026}
+    # 7 天
+    expire-seconds: 604800
+  seed:
+    # 首次启动灌入示例数据，讲演示用
+    enabled: true
+
+logging:
+  level:
+    com.carlog: debug

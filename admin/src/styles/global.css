@@ -1,0 +1,113 @@
+:root {
+  /* 车迹深色霓虹主题：与小程序视觉保持一致 */
+  --bg-0: #0a0e17;
+  --bg-1: #111826;
+  --bg-2: #18202f;
+  --bg-card: #161e2e;
+  --border: #243047;
+  --text-0: #e6edf6;
+  --text-1: #9fb0c8;
+  --text-2: #5f7088;
+  --neon: #00d4ff;
+  --neon-2: #7c4dff;
+  --neon-green: #21f3a0;
+  --warn: #ffb547;
+  --danger: #ff4d6d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(124, 77, 255, 0.12), transparent 60%),
+    radial-gradient(1000px 500px at -10% 10%, rgba(0, 212, 255, 0.1), transparent 55%),
+    var(--bg-0);
+  color: var(--text-0);
+  font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Element Plus 暗色微调 */
+.el-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 14px !important;
+}
+.el-card__header {
+  border-bottom: 1px solid var(--border) !important;
+  font-weight: 600;
+}
+.el-table,
+.el-table__expanded-cell {
+  background: transparent !important;
+  color: var(--text-0) !important;
+}
+.el-table tr,
+.el-table th.el-table__cell {
+  background: transparent !important;
+  color: var(--text-1) !important;
+}
+.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell {
+  background: rgba(0, 212, 255, 0.06) !important;
+}
+.el-table td.el-table__cell,
+.el-table th.el-table__cell.is-leaf {
+  border-bottom: 1px solid var(--border) !important;
+}
+.el-input__wrapper,
+.el-textarea__inner {
+  background: var(--bg-2) !important;
+  box-shadow: 0 0 0 1px var(--border) inset !important;
+  color: var(--text-0) !important;
+}
+.el-form-item__label {
+  color: var(--text-1) !important;
+}
+.el-button--primary {
+  background: linear-gradient(135deg, var(--neon), var(--neon-2)) !important;
+  border: none !important;
+  color: #04121e !important;
+  font-weight: 600;
+}
+.el-dialog {
+  background: var(--bg-1) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 14px !important;
+}
+.el-dialog__title {
+  color: var(--text-0) !important;
+}
+.el-overlay {
+  background: rgba(5, 8, 14, 0.7) !important;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 通用工具类 */
+.neon-text {
+  color: var(--neon);
+  text-shadow: 0 0 12px rgba(0, 212, 255, 0.5);
+}
+.muted {
+  color: var(--text-2);
+}

@@ -1,5 +1,8 @@
 const storage = require('../../utils/storage');
 const ui = require('../../utils/ui');
+const config = require('../../utils/config');
+const auth = require('../../services/auth');
+const remote = require('../../services/remote');
 
 Page({
   data: {
@@ -9,7 +12,12 @@ Page({
     // 缓存
     cacheCount: 0,
     cacheKb: 0,
-    version: '1.0.0'
+    version: '1.0.0',
+    // 后端连接
+    useRemote: false,
+    apiBase: '',
+    remoteStatus: '',
+    testing: false
   },
 
   onShow() {
@@ -18,7 +26,9 @@ Page({
       cacheCount: size.count,
       cacheKb: size.kb,
       remindMaintain: storage.get('remindMaintain', true),
-      remindFuel: storage.get('remindFuel', false)
+      remindFuel: storage.get('remindFuel', false),
+      useRemote: config.USE_REMOTE,
+      apiBase: config.API_BASE
     });
   },
 
@@ -32,6 +42,55 @@ Page({
     const v = e.detail.value;
     this.setData({ remindFuel: v });
     storage.set('remindFuel', v);
+  },
+
+  /* ================= 后端连接 ================= */
+
+  onApiBaseInput(e) {
+    this.setData({ apiBase: e.detail.value });
+  },
+
+  onToggleRemote(e) {
+    const v = e.detail.value;
+    this.setData({ useRemote: v, remoteStatus: '' });
+    config.USE_REMOTE = v;
+    storage.set('use_remote', v);
+    if (v) {
+      const base = this.data.apiBase.trim();
+      if (base) {
+        config.API_BASE = base;
+        storage.set('api_base', base);
+      }
+      // 打开远程后预热登录态，让仪表盘立刻能拉数据
+      auth.ensureLogin().catch(() => {});
+    }
+  },
+
+  async onTestConnection() {
+    const base = this.data.apiBase.trim();
+    if (!base) {
+      ui.toast('请先填写后端地址');
+      return;
+    }
+    config.API_BASE = base;
+    storage.set('api_base', base);
+
+    this.setData({ testing: true, remoteStatus: '连接中…' });
+    try {
+      await auth.ensureLogin();
+      const cars = await remote.getCars();
+      this.setData({
+        testing: false,
+        remoteStatus: `连接成功，获取到 ${cars.length} 辆车`
+      });
+      ui.success('连接成功');
+    } catch (err) {
+      this.setData({
+        testing: false,
+        remoteStatus: '连接失败：' + ((err && err.message) || '未知错误')
+      });
+      ui.toast('连接失败');
+    }
   },
 
   /** 导出数据为 JSON 文本，方便用户备份 */

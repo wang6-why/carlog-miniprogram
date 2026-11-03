@@ -1,0 +1,49 @@
+# 车迹 · 全栈一键起
+#
+#   docker compose up -d
+#
+# 会拉起 MySQL 8 与后端（mysql profile），后端启动时会自动建表并灌入演示数据。
+# 后端暴露 8088，接口前缀 /api；管理后台（admin/）和微信小程序按需连这个地址。
+#
+# 演示账号：demo / 123456（管理员 admin / admin123）
+# 首次启动会创建名为 carlog 的库，等待 mysql 健康后才启动后端。
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: carlog-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: carlog
+      TZ: Asia/Shanghai
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - carlog-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  server:
+    build: ./server
+    container_name: carlog-server
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: mysql
+      MYSQL_HOST: mysql
+      MYSQL_PORT: "3306"
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      # 生产务必改掉这个 JWT 密钥
+      CARLOG_JWT_SECRET: change-me-in-prod-please-2026
+    ports:
+      - "8088:8088"
+    restart: unless-stopped
+
+volumes:
+  carlog-mysql-data:

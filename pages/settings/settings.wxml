@@ -21,6 +21,42 @@
     </view>
   </view>
 
+  <!-- ============ 后端连接 ============ -->
+  <view class="section-title">后端连接</view>
+
+  <view class="menu-group">
+    <view class="menu-item">
+      <view class="mi-left">
+        <text class="mi-text">启用真实后端</text>
+        <text class="mi-sub">关闭则使用本地数据，开启后仪表盘从服务器拉取</text>
+      </view>
+      <switch checked="{{useRemote}}" color="#00D4FF" bindchange="onToggleRemote" />
+    </view>
+
+    <view class="menu-item col">
+      <view class="mi-left" style="margin-bottom:10rpx;">
+        <text class="mi-text">后端地址</text>
+        <text class="mi-sub">含 /api，如 http://192.168.1.50:8088/api</text>
+      </view>
+      <input
+        class="api-input"
+        value="{{apiBase}}"
+        placeholder="https://your-domain.example.com/api"
+        bindinput="onApiBaseInput"
+      />
+    </view>
+
+    <view class="menu-item col">
+      <view class="mi-left" style="margin-bottom:10rpx;">
+        <text class="mi-text">连接测试</text>
+        <text class="mi-sub">{{remoteStatus || '填写地址后点此验证'}}</text>
+      </view>
+      <button class="test-btn" size="mini" loading="{{testing}}" bindtap="onTestConnection">
+        测试连接
+      </button>
+    </view>
+  </view>
+
   <!-- ============ 数据管理 ============ -->
   <view class="section-title">数据</view>
 

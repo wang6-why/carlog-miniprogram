@@ -1,4 +1,6 @@
 const storage = require('./utils/storage');
+const config = require('./utils/config');
+const auth = require('./services/auth');
 
 App({
   globalData: {
@@ -27,6 +29,15 @@ App({
     // 首次使用给个引导标记
     if (!storage.get('onboarded')) {
       storage.set('onboarded', true);
+    }
+
+    // 远程后端开关：从 storage 恢复（设置页里切换后持久化到这里）
+    if (storage.get('use_remote') === true) {
+      config.USE_REMOTE = true;
+      const base = storage.get('api_base');
+      if (base) config.API_BASE = base;
+      // 预热登录态，仪表盘打开就能直接拉数据
+      auth.ensureLogin().catch(() => {});
     }
   },
 
